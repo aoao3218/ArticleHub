@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 interface Branch {
   name: string;
@@ -23,14 +24,12 @@ interface ArticleProps {
 }
 
 const Article = ({ team, articles, project, currentBranch }: ArticleProps) => {
+  const { teamId } = useParams();
   return (
     <div>
       <ul>
         {articles.map((article) => (
-          <Link
-            to={`/article/${team}/${project._id}-${project.name}/${currentBranch}/${article.article_id}`}
-            key={article.article_id}
-          >
+          <Link to={`/article/${teamId}-${team}/${project._id}-${project.name}/${currentBranch}/${article.article_id}`}>
             <li>{article.title}</li>
           </Link>
         ))}

@@ -6,27 +6,27 @@ import MediumEditor from './pages/MediumEditor';
 import Account from './pages/Account';
 import Profile from './pages/Profile';
 import Project from './components/BackstagePage/Project';
-import Compare from './pages/Compare';
+import MergeRequestCompare from './pages/MergeRequestCompare';
+import MergeCompare from './pages/MergeCompare';
 import { TeamCtxProvider } from './context/TeamCtx';
-import { ProjectCtxProvider } from './context/ProjectCtx';
+
 const App = () => {
   return (
     <TeamCtxProvider>
-      <ProjectCtxProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/team/:teamId" element={<Backstage />}>
-              <Route path=":projectId" element={<Project />} />
-            </Route>
-            <Route path="/mergeCompare/:projectId/:branch" element={<Compare />} />
-            <Route path="/article/:team/:projectId/:branch?/:id?/:number?" element={<MediumEditor />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </ProjectCtxProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/team/:teamId" element={<Backstage />}>
+            <Route path=":projectId" element={<Project />} />
+          </Route>
+          <Route path="/compare/mergeRequest/:projectId/:branch" element={<MergeRequestCompare />} />
+          <Route path="/compare/merge/:teamId/:projectId/:branch" element={<MergeCompare />} />
+          <Route path="/article/:team/:projectId/:branch?/:id?/:number?" element={<MediumEditor />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </TeamCtxProvider>
   );
 };

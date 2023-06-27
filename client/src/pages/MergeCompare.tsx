@@ -2,53 +2,54 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ArticleList from '../components/ComparePage/ArticleList';
 import { ArticleCtxProvider } from '../context/ArticleCtx';
 import CompareContent from '../components/ComparePage/CompareContent';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import MessagePOP from '../components/MessagePOP';
+import { ProjectCtx } from '../context/ProjectCtx';
 
-const Compare = () => {
+const MergeCompare = () => {
   const jwt = localStorage.getItem('jwt');
   const navigate = useNavigate();
+  const { teamId } = useParams();
   const { branch } = useParams();
   const { projectId } = useParams();
+  const { setProjects } = useContext(ProjectCtx);
   const [id, name]: string[] = projectId?.split('-') ?? [];
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
-  const [update, setUpdate] = useState(false);
+
+  // function getProject() {
+  //   fetch(`http://localhost:3000/api/project/${teamId}`, {
+  //     headers: new Headers({
+  //       Authorization: `Bearer ${jwt}`,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => setProjects(data))
+  //     .catch((err) => console.log(err));
+  // }
 
   const back = () => {
     navigate(-1);
   };
-  const mergeRequest = () => {
-    fetch(`http://localhost:3000/api/branch/merge_request/${id}/${branch}`, {
+
+  const merge = (branch: string | undefined) => () => {
+    fetch(`http://localhost:3000/api/branch/merge/${id}/${branch}`, {
+      method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
       }),
+      body: JSON.stringify({ teamId }),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         if (data.errors) {
           setMessage(true);
-          setUpdate(true);
           setMgs(data.errors);
           return;
         }
         navigate(-1);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const handleUpdate = () => {
-    fetch(`http://localhost:3000/api/branch/update/${id}/${branch}`, {
-      headers: new Headers({
-        Authorization: `Bearer ${jwt}`,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setUpdate(false);
       })
       .catch((err) => console.log(err));
   };
@@ -72,12 +73,7 @@ const Compare = () => {
             </p>
           </div>
           <div style={{ margin: 'auto 0' }}>
-            {update && (
-              <button style={{ marginRight: '12px' }} onClick={handleUpdate}>
-                update
-              </button>
-            )}
-            <button onClick={mergeRequest}>merge request</button>
+            <button onClick={merge(branch)}>merge</button>
           </div>
         </div>
       </div>
@@ -91,4 +87,4 @@ const Compare = () => {
   );
 };
 
-export default Compare;
+export default MergeCompare;

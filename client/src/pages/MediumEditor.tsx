@@ -4,6 +4,7 @@ import 'medium-editor/dist/css/themes/default.css';
 import MediumEditor, { CoreOptions } from 'medium-editor';
 import { useParams, useNavigate } from 'react-router-dom';
 import MessagePOP from '../components/MessagePOP';
+import { Link } from 'react-router-dom';
 import '../App.css';
 
 const Edit = () => {
@@ -15,11 +16,13 @@ const Edit = () => {
   const articleId = params.id;
   const branch = params.branch || 'main';
   const { team } = useParams();
+  const [teamId, teamName]: string[] = team?.split('-') ?? [];
   const { projectId } = useParams();
   const [id, name]: string[] = projectId?.split('-') ?? [];
   const number = params.number;
   const url = `http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${number}`;
   const [message, setMessage] = useState(false);
+  const [mgs, setMgs] = useState('');
 
   const handleSave = () => {
     const story = editorRef.current?.innerHTML;
@@ -37,11 +40,17 @@ const Edit = () => {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
+          if (data.errors) {
+            setMessage(true);
+            setMgs(data.errors);
+            return;
+          }
           if (!articleId) {
-            const newUrl = `/article/${branch}/${data.article_id}`;
+            const newUrl = `/article/${team}/${projectId}/${branch}/${data.article_id}`;
             navigate(newUrl);
           }
           setMessage(true);
+          setMgs('save success');
         })
         .catch((err) => console.log(err));
     } catch (error) {
@@ -52,7 +61,6 @@ const Edit = () => {
   const handleCompare = () => {
     try {
       fetch(`http://localhost:3000/api/article/compare/${branch}/${articleId}`, {
-        method: 'POST',
         headers: new Headers({
           Authorization: `Bearer ${jwt}`,
           'Content-Type': 'application/json',
@@ -71,8 +79,26 @@ const Edit = () => {
     }
   };
 
-  const back = () => {
-    navigate(-1);
+  const handlePublish = () => {
+    fetch(`http://localhost:3000/api/article/publish/${id}/${articleId}`, {
+      method: 'POST',
+      headers: new Headers({
+        Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.errors) {
+          setMessage(true);
+          setMgs(data.errors);
+          return;
+        }
+        setMessage(true);
+        setMgs('publish success');
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
@@ -121,19 +147,24 @@ const Edit = () => {
 
   return (
     <div>
-      {message && <MessagePOP msg={'save success'} onClose={() => setMessage(false)} />}
+      {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
       <div className="head">
         <div className="content">
-          <div onClick={back} className="row">
-            <span style={{ margin: 'auto 8px' }}>&lt;</span>
-            <h5 style={{ margin: 'auto 0' }}>Back</h5>
-          </div>
+          <Link to={`/team/${teamId}/${id}`} style={{ margin: 'auto 0' }}>
+            <div className="row">
+              <span style={{ margin: 'auto 8px' }}>&lt;</span>
+              <h5 style={{ margin: 'auto 0' }}>Back</h5>
+            </div>
+          </Link>
           <div style={{ margin: 'auto 0' }}>
-            {branch == 'main' ? (
-              ''
-            ) : (
+            {branch !== 'main' && (
               <button style={{ marginRight: '10px' }} onClick={handleCompare}>
                 compare
+              </button>
+            )}
+            {branch == 'main' && (
+              <button style={{ marginRight: '10px' }} onClick={handlePublish}>
+                publish
               </button>
             )}
             <button onClick={handleSave}>save</button>
@@ -143,7 +174,8 @@ const Edit = () => {
 
       <div className="edit">
         <p className="row">
-          <p style={{ margin: '0 4px' }}>{team}</p>&gt;<p style={{ margin: '0 4px' }}>{name}</p>&gt;
+          <p style={{ margin: '0 4px' }}>{teamName}</p>&gt;<p style={{ margin: '0 4px' }}>{name}</p>
+          &gt;
           <p style={{ margin: '0 4px' }}>{title}</p>
         </p>
         <input id="title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />

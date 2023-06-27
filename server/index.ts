@@ -5,6 +5,7 @@ import projectRouter from './routes/project.js';
 import articleRouter from './routes/article.js';
 import userRouter from './routes/user.js';
 import branchRouter from './routes/branch.js';
+import publishRouter from './routes/publish.js';
 import { errorHandler } from './utils/errorHandler.js';
 import authenticate from './middleware/authenticate.js';
 import path from 'path';
@@ -38,7 +39,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use('/api', userRouter);
+app.use('/api', [userRouter, publishRouter]);
 app.use('/api', authenticate, [teamRouter, projectRouter, branchRouter, articleRouter]);
 app.use(express.static('../client/dist'));
 app.get('*', (req, res) => {

@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-// import { ProjectCtxProvider } from '../context/ProjectCtx';
+import { ProjectCtxProvider } from '../context/ProjectCtx';
 import { TeamCtx } from '../context/TeamCtx';
 import Header from '../components/Header';
 import Navbar from '../components/BackstagePage/Navbar';
@@ -26,8 +26,10 @@ const Backstage = () => {
     <div>
       <Header />
       <div className="row">
-        <Navbar />
-        <Outlet />
+        <ProjectCtxProvider>
+          <Navbar />
+          <Outlet />
+        </ProjectCtxProvider>
       </div>
     </div>
   );

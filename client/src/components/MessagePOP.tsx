@@ -13,6 +13,7 @@ const MessagePOP: React.FC<MsgProps> = ({ msg, onClose }) => {
       style={{
         position: 'absolute',
         left: '50%',
+        top: '32px',
         transform: 'translateX(-50%)',
         margin: '20px auto',
         alignContent: 'center',

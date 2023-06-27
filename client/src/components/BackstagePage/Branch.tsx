@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { ProjectCtx } from '../../context/ProjectCtx';
+import { Link } from 'react-router-dom';
 
 interface Branch {
   _id: string;
@@ -21,37 +20,7 @@ interface BranchProps {
 }
 
 const Branch = ({ project }: BranchProps) => {
-  const jwt = localStorage.getItem('jwt');
-  const { setProjects } = useContext(ProjectCtx);
   const { teamId } = useParams();
-
-  function getProject() {
-    fetch(`http://localhost:3000/api/project/${teamId}`, {
-      headers: new Headers({
-        Authorization: `Bearer ${jwt}`,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => setProjects(data))
-      .catch((err) => console.log(err));
-  }
-
-  const merge = (branch: string) => () => {
-    fetch(`http://localhost:3000/api/branch/merge/${project._id}/${branch}`, {
-      method: 'POST',
-      headers: new Headers({
-        Authorization: `Bearer ${jwt}`,
-        'Content-Type': 'application/json',
-      }),
-      body: JSON.stringify({ teamId }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        getProject();
-      })
-      .catch((err) => console.log(err));
-  };
 
   return (
     <div>
@@ -60,7 +29,11 @@ const Branch = ({ project }: BranchProps) => {
           <li className="row" style={{ justifyContent: 'space-between' }}>
             {branch.name}
             <div>
-              {branch.merge_request && <button onClick={merge(branch.name)}>merge</button>}
+              {branch.merge_request && (
+                <Link to={`/compare/merge/${teamId}/${project._id}-${project.name}/${branch.name}`}>
+                  <button>merge</button>
+                </Link>
+              )}
               <button style={{ marginLeft: '16px' }}>delete</button>
             </div>
           </li>

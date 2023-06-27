@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useCookies } from 'react-cookie';
 
 const SignIN = () => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
-  // const [cookies, setCookie] = useCookies(['jwt']);
 
   const navigate = useNavigate();
 

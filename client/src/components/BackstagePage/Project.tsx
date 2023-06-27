@@ -7,6 +7,7 @@ import CreateBranch from '../CreateBranch';
 import Article from './Article';
 import Branch from './Branch';
 import MessagePOP from '../MessagePOP';
+import Publish from './Publish';
 
 interface Article {
   article_id: string;
@@ -26,7 +27,6 @@ const Project = () => {
   const [tab, setTab] = useState('article');
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
-  const [isUpdate, setUpdate] = useState(false);
 
   function getArticle() {
     fetch(`http://localhost:3000/api/article/${projectId}/${currentBranch}`, {
@@ -67,7 +67,7 @@ const Project = () => {
     return <div>no projects</div>;
   }
   return (
-    <div className="content">
+    <div className="content" style={{ width: '100%', margin: 'auto' }}>
       {openBranch && <CreateBranch onClose={closeCreateBranch} create={createBranch} projectId={projectId} />}
       {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
       <div className="row btw" style={{ marginBottom: '32px' }}>
@@ -88,7 +88,10 @@ const Project = () => {
         <div className="row">
           {currentBranch !== 'main' && (
             <button style={{ marginLeft: '12px' }}>
-              <Link to={`/mergeCompare/${projectId}-${project.name}/${currentBranch}`} style={{ color: '#ffff' }}>
+              <Link
+                to={`/compare/mergeRequest/${projectId}-${project.name}/${currentBranch}`}
+                style={{ color: '#ffff' }}
+              >
                 merge request
               </Link>
             </button>
@@ -102,7 +105,7 @@ const Project = () => {
             new branch
           </button>
           <button style={{ marginLeft: '12px' }}>
-            <Link to={`/article/${projectId}/${currentBranch}`} style={{ color: '#ffff' }}>
+            <Link to={`/article/${team.name}/${projectId}-${project.name}/${currentBranch}`} style={{ color: '#ffff' }}>
               new article{' '}
             </Link>
           </button>
@@ -112,9 +115,14 @@ const Project = () => {
         <span className="tab" onClick={() => setTab('article')}>
           Article
         </span>
-        {team?.own && (
+        {team.own && (
           <span className="tab" onClick={() => setTab('branch')}>
             Branch Control
+          </span>
+        )}
+        {team.own && (
+          <span className="tab" onClick={() => setTab('publish')}>
+            Publish
           </span>
         )}
       </div>
@@ -122,6 +130,7 @@ const Project = () => {
         <Article team={team.name} articles={articles} project={project} currentBranch={currentBranch} />
       )}
       {tab === 'branch' && <Branch project={project} />}
+      {tab === 'publish' && <Publish />}
     </div>
   );
 };

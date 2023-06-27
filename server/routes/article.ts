@@ -1,11 +1,21 @@
 import { Router } from 'express';
-import { saveArticle, getArticle, compareArticle, getAllArticle } from '../controllers/article.js';
+import {
+  saveArticle,
+  getArticle,
+  compareArticle,
+  getAllArticle,
+  getProjectPublish,
+  publishArticle,
+  getAllPublish,
+} from '../controllers/article.js';
 import { articleAuthorization } from '../middleware/authorization.js';
 const router = Router();
 
-router.route('/article/publish').post();
+router.route('/article/publish/:projectId').get(getProjectPublish);
 
-router.route('/article/compare/:branch/:articleId').post(compareArticle);
+router.route('/article/publish/:projectId/:articleId').post(publishArticle);
+
+router.route('/article/compare/:branch/:articleId').get(compareArticle);
 
 router.route('/article/:projectId/:branch').get(getAllArticle);
 

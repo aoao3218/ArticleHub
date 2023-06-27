@@ -3,7 +3,7 @@ import 'medium-editor/dist/css/medium-editor.css';
 import 'medium-editor/dist/css/themes/default.css';
 import MediumEditor, { CoreOptions } from 'medium-editor';
 import { useParams, useNavigate } from 'react-router-dom';
-import SuccessMessage from '../components/SuccessMessage';
+import MessagePOP from '../components/MessagePOP';
 import '../App.css';
 
 const Edit = () => {
@@ -14,9 +14,11 @@ const Edit = () => {
   const params = useParams();
   const articleId = params.id;
   const branch = params.branch || 'main';
+  const { team } = useParams();
   const { projectId } = useParams();
+  const [id, name]: string[] = projectId?.split('-') ?? [];
   const number = params.number;
-  const url = `http://localhost:3000/api/article/${projectId}/${branch}/${articleId}?number=${number}`;
+  const url = `http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${number}`;
   const [message, setMessage] = useState(false);
 
   const handleSave = () => {
@@ -119,7 +121,7 @@ const Edit = () => {
 
   return (
     <div>
-      {message && <SuccessMessage msg={'save success'} onClose={() => setMessage(false)} />}
+      {message && <MessagePOP msg={'save success'} onClose={() => setMessage(false)} />}
       <div className="head">
         <div className="content">
           <div onClick={back} className="row">
@@ -140,6 +142,10 @@ const Edit = () => {
       </div>
 
       <div className="edit">
+        <p className="row">
+          <p style={{ margin: '0 4px' }}>{team}</p>&gt;<p style={{ margin: '0 4px' }}>{name}</p>&gt;
+          <p style={{ margin: '0 4px' }}>{title}</p>
+        </p>
         <input id="title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
         <div ref={editorRef} className="editable" />
       </div>

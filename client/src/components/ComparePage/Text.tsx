@@ -38,6 +38,7 @@ const Text = ({ branch }: Branch) => {
 
   useEffect(() => {
     const editor = new MediumEditor(editorRef.current!, {
+      placeholder: false,
       toolbar: {
         buttons: ['bold', 'italic', 'underline', 'anchor'],
       },

@@ -3,7 +3,7 @@ interface MsgProps {
   onClose: () => void;
 }
 
-const SuccessMessage: React.FC<MsgProps> = ({ msg, onClose }) => {
+const MessagePOP: React.FC<MsgProps> = ({ msg, onClose }) => {
   const handleClose = () => {
     onClose();
   };
@@ -28,4 +28,4 @@ const SuccessMessage: React.FC<MsgProps> = ({ msg, onClose }) => {
   );
 };
 
-export default SuccessMessage;
+export default MessagePOP;

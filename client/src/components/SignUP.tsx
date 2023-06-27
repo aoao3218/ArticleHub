@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import FailedMessage from './FailedMessage';
-import SuccessMessage from './SuccessMessage';
+import MessagePOP from './MessagePOP';
 
 const SignUP = () => {
   const [userEmail, setUserEmail] = useState('');
@@ -29,7 +29,7 @@ const SignUP = () => {
   return (
     <div className="column">
       <h4>Join Medium.</h4>
-      {success && <SuccessMessage msg={'create success'} onClose={() => setSuccess(false)} />}
+      {success && <MessagePOP msg={'create success'} onClose={() => setSuccess(false)} />}
       {failed && <FailedMessage mgs={mgs} />}
       <div className="form">
         <label htmlFor="name">Name</label>

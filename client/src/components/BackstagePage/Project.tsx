@@ -6,7 +6,7 @@ import { TeamCtx } from '../../context/TeamCtx';
 import CreateBranch from '../CreateBranch';
 import Article from './Article';
 import Branch from './Branch';
-import SuccessMessage from '../SuccessMessage';
+import MessagePOP from '../MessagePOP';
 
 interface Article {
   article_id: string;
@@ -61,26 +61,15 @@ const Project = () => {
       .catch((err) => console.log(err));
   };
 
-  const update = () => {
-    fetch(`http://localhost:3000/api/branch/update/${projectId}/${currentBranch}`, {
-      headers: new Headers({
-        Authorization: `Bearer ${jwt}`,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err));
-  };
-
   const project = projects.find((item) => item._id === projectId);
 
-  if (!project) {
+  if (!team || !project) {
     return <div>no projects</div>;
   }
   return (
     <div className="content">
       {openBranch && <CreateBranch onClose={closeCreateBranch} create={createBranch} projectId={projectId} />}
-      {message && <SuccessMessage msg={mgs} onClose={() => setMessage(false)} />}
+      {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
       <div className="row btw" style={{ marginBottom: '32px' }}>
         <div className="row" style={{ margin: '32px 0' }}>
           <h2>{project.name}</h2>
@@ -97,12 +86,7 @@ const Project = () => {
           </select>
         </div>
         <div className="row">
-          {currentBranch !== 'main' && isUpdate && (
-            <button style={{ marginLeft: '12px' }} onClick={update}>
-              update
-            </button>
-          )}
-          {currentBranch !== 'main' && !isUpdate && (
+          {currentBranch !== 'main' && (
             <button style={{ marginLeft: '12px' }}>
               <Link to={`/mergeCompare/${projectId}-${project.name}/${currentBranch}`} style={{ color: '#ffff' }}>
                 merge request
@@ -134,7 +118,9 @@ const Project = () => {
           </span>
         )}
       </div>
-      {tab == 'article' && <Article articles={articles} project={project} currentBranch={currentBranch} />}
+      {tab == 'article' && (
+        <Article team={team.name} articles={articles} project={project} currentBranch={currentBranch} />
+      )}
       {tab === 'branch' && <Branch project={project} />}
     </div>
   );

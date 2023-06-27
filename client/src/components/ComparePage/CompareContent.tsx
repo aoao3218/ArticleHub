@@ -5,8 +5,8 @@ const CompareContent = () => {
   const { branch } = useParams();
   return (
     <div className="row" style={{ width: '100%' }}>
-      <Text branch={'main'} />
       <Text branch={branch} />
+      <Text branch={'main'} />
     </div>
   );
 };

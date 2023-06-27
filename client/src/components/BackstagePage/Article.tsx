@@ -6,6 +6,7 @@ interface Branch {
 }
 
 interface ArticleProps {
+  team: string;
   articles: Array<{
     article_id: string;
     title: string;
@@ -21,12 +22,15 @@ interface ArticleProps {
   currentBranch: string;
 }
 
-const Article = ({ articles, project, currentBranch }: ArticleProps) => {
+const Article = ({ team, articles, project, currentBranch }: ArticleProps) => {
   return (
     <div>
       <ul>
         {articles.map((article) => (
-          <Link to={`/article/${project._id}/${currentBranch}/${article.article_id}`} key={article.article_id}>
+          <Link
+            to={`/article/${team}/${project._id}-${project.name}/${currentBranch}/${article.article_id}`}
+            key={article.article_id}
+          >
             <li>{article.title}</li>
           </Link>
         ))}

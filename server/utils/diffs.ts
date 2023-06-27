@@ -1,7 +1,6 @@
 import { diff_match_patch, patch_obj, DIFF_DELETE, DIFF_INSERT, DIFF_EQUAL, Diff } from 'diff-match-patch';
 import articles from '../models/article.js';
 import versions from '../models/version.js';
-import { ValidationError } from './errorHandler.js';
 const dmp = new diff_match_patch();
 
 export async function getPatches(articleId: string, branch: string, story: string) {
@@ -40,6 +39,9 @@ export async function getStory(articleId: string, branch: string, number: string
     const articleMain = await articles.findOne({ article_id: articleId, branch: 'main' });
     const articleBranch = await versions.findOne({ article_id: articleId, branch });
     const title = articleMain?.title;
+    if (!articleMain) {
+      return { title: '', story: '' };
+    }
     if (!articleBranch) {
       const story = dmp.patch_apply(articleMain?.history.flat() as patch_obj[], articleMain?.story as string)[0];
       return { title, story };

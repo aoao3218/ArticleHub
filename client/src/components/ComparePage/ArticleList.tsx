@@ -32,6 +32,7 @@ const ArticleList = () => {
     <div className="navbar">
       <div>
         <h2 style={{ margin: '32px 0px' }}>{name}</h2>
+        <p>change articles</p>
         <ul>
           {articles.map((article) => (
             <li onClick={() => setArticleId(article.article_id)}>{article.title}</li>

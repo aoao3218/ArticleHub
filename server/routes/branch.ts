@@ -19,7 +19,7 @@ router.route('/branch/merge_request/:projectId/:branch').get(mergeRequest);
 
 router.route('/branch/compare/:projectId/:branch').get(getChangeArticleId);
 
-router.route('/branch/update/:projectId/:branch').post(updateBranchArticles);
+router.route('/branch/update/:projectId/:branch').get(updateBranchArticles);
 
 router.route('/branch/merge/:projectId/:branch').post(authorization(['owner', 'admin']), mergeBranchArticles);
 

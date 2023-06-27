@@ -1,6 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { ValidationError } from '../utils/errorHandler.js';
-import teams from '../models/team.js';
 import projects from '../models/project.js';
 import articles from '../models/article.js';
 import versions from '../models/version.js';
@@ -81,6 +80,38 @@ async function updateMergeRequest(req: Request, res: Response, mergeRequestFlag:
   try {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
+
+    const branchArticles = await articles.aggregate([
+      {
+        $match: {
+          project_id: new ObjectId(projectId),
+        },
+      },
+      {
+        $lookup: {
+          from: 'versions',
+          localField: 'article_id',
+          foreignField: 'article_id',
+          as: 'versions',
+        },
+      },
+      {
+        $match: {
+          $or: [{ branch }, { 'versions.branch': branch }],
+        },
+      },
+    ]);
+
+    const newArticles = branchArticles.filter((ele) => ele.branch == branch);
+    const articleVersions = branchArticles.filter((ele) =>
+      ele.versions.some((version: any) => version.branch === branch)
+    );
+
+    const checkVersion = articleVersions.map((item) => item.history.length !== item.versions[0].update_index);
+    if (checkVersion.includes(true)) {
+      throw new Error('please update branch');
+    }
+
     const filter = { _id: projectId, 'branch.name': branch };
     const update = { $set: { 'branch.$.merge_request': mergeRequestFlag } };
     const options = { new: true };

@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react';
 import { TeamCtx } from '../context/TeamCtx';
 import { Link } from 'react-router-dom';
 import CreateTeam from './CreateTeam';
-import SuccessMessage from './SuccessMessage';
+import MessagePOP from './MessagePOP';
 
 const TeamList = () => {
   const { teams, setTeams } = useContext(TeamCtx);
@@ -50,7 +50,7 @@ const TeamList = () => {
   return (
     <div>
       {isOpen && <CreateTeam onClose={closeCreateTeam} create={createSuccess} />}
-      {message && <SuccessMessage msg={'create success'} onClose={() => setMessage(false)} />}
+      {message && <MessagePOP msg={'create success'} onClose={() => setMessage(false)} />}
       <div className="profile">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p className="user">{user}</p>

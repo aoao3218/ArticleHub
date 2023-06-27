@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { TeamCtx } from '../../context/TeamCtx';
 import { ProjectCtx } from '../../context/ProjectCtx';
 import InviteMember from '../InviteMember';
-import SuccessMessage from '../SuccessMessage';
+import MessagePOP from '../MessagePOP';
 
 const Navbar = () => {
   const { teamId } = useParams();
@@ -68,7 +68,7 @@ const Navbar = () => {
     <div className="navbar">
       {isCreateProject && <CreateProject onClose={closeProject} create={createProject} />}
       {invite && <InviteMember onClose={closeInvite} create={inviteSuccess} teamId={teamId} />}
-      {message && <SuccessMessage msg={mgs} onClose={() => setMessage(false)} />}
+      {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
       <div>
         <h2 style={{ margin: '32px 0px' }}>{team.name}</h2>
         <ul>

@@ -2,10 +2,10 @@ import { Schema, Types } from 'mongoose';
 import mongoose from 'mongoose';
 
 const publishSchema = new Schema({
-  id: Types.ObjectId,
+  article_id: String,
   title: String,
   content: String,
-  author: Number,
+  author: { type: Types.ObjectId, ref: 'users' },
 });
 
 export default mongoose.model('publish', publishSchema);

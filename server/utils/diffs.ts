@@ -1,7 +1,7 @@
 import { diff_match_patch, patch_obj, DIFF_DELETE, DIFF_INSERT, DIFF_EQUAL, Diff } from 'diff-match-patch';
 import articles from '../models/article.js';
 import versions from '../models/version.js';
-import { inviteMember } from '../controllers/team.js';
+import { ValidationError } from './errorHandler.js';
 const dmp = new diff_match_patch();
 
 export async function getPatches(articleId: string, branch: string, story: string) {

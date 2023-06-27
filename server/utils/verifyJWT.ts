@@ -1,10 +1,12 @@
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const JWT_KEY = process.env.JWT_KEY || '';
 
 const DecodedSchema = z.object({
-  userId: z.number(),
+  userId: z.string(),
 });
 
 type Decoded = z.infer<typeof DecodedSchema>;

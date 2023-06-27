@@ -7,22 +7,44 @@ import versions from '../models/version.js';
 import { ObjectId } from 'mongodb';
 import { updateStory, mergeStory } from '../utils/diffs.js';
 
+interface Project {
+  id: string;
+  name: string;
+  team_id: {
+    _id: string;
+    name: string;
+    owner: string;
+    member: {
+      _id: string;
+      role: 'admin' | 'user';
+    }[];
+  };
+  main: string;
+  createBy: string;
+  branch: {
+    name: string;
+    createBy: string;
+    merge_request: boolean;
+  }[];
+}
+
 export async function createBranch(req: Request, res: Response) {
   try {
-    const teamId = req.params.teamId;
     const projectId = req.params.projectId;
     const { name } = req.body;
-    const userId = res.locals?.userId ?? false;
-    const checkInvitation = await teams.findOne({
-      $or: [
-        { _id: teamId, owner: userId },
-        { _id: teamId, 'member.id': userId },
-      ],
-    });
-    if (!checkInvitation) {
+    const userId = res.locals?.userId;
+    const project: Project | null = await projects.findById(projectId).populate('team_id');
+    const isOwner = userId === project?.team_id?.owner.toString();
+
+    let isMember = false;
+    if (project?.team_id?.member) {
+      isMember = project.team_id.member.some((member) => member._id.toString() === userId);
+    }
+
+    if (!isOwner && !isMember) {
       throw new ValidationError('No Invitation');
     }
-    const filter = { _id: projectId, team_id: teamId };
+    const filter = { _id: projectId, team_id: project?.team_id._id };
     const update = { $push: { branch: [{ name, createBy: userId }] } };
     const result = await projects.findByIdAndUpdate(filter, update, { new: true });
     res.status(200).json(result);
@@ -32,6 +54,21 @@ export async function createBranch(req: Request, res: Response) {
       res.status(400).json({ errors: err.message });
       return;
     }
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: 'create Branch failed' });
+  }
+}
+
+export async function getBranch(req: Request, res: Response) {
+  try {
+    const projectId = req.params.projectId;
+    const result = await projects.findById(projectId);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
     if (err instanceof Error) {
       res.status(500).json({ errors: err.message });
       return;
@@ -111,6 +148,7 @@ export async function getChangeArticleId(req: Request, res: Response) {
     // );
     const changeArticles = branchArticles.map((ele) => ({
       article_id: ele.article_id,
+      title: ele.title,
     }));
     res.status(200).json(changeArticles);
   } catch (err) {
@@ -201,7 +239,6 @@ export async function mergeBranchArticles(req: Request, res: Response) {
     );
 
     const checkVersion = articleVersions.map((item) => item.history.length !== item.versions[0].update_index);
-    console.log(checkVersion);
     if (checkVersion.includes(true)) {
       throw new ValidationError('some article not update');
     }
@@ -227,7 +264,6 @@ export async function mergeBranchArticles(req: Request, res: Response) {
         };
       })
     );
-
     const result = await articles.bulkWrite([...(await updateBranch), ...(await updateDiffs)]);
     const deleteId = articleVersions.map((ele) => ele.article_id);
     await versions.deleteMany({ article_id: deleteId });

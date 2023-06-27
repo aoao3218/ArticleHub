@@ -8,10 +8,8 @@ const projectSchema = new Schema({
     type: Types.ObjectId,
     ref: 'teams',
   },
-  main: {
-    type: String,
-    default: 'main',
-  },
+  main: String,
+  createBy: { type: Types.ObjectId, ref: 'users' },
   branch: [
     {
       name: String,

@@ -7,6 +7,7 @@ const teamSchema = new Schema({
   owner: {
     type: Types.ObjectId,
     ref: 'users',
+    required: true,
   },
   member: [
     {

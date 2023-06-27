@@ -38,7 +38,6 @@ export async function saveArticle(req: Request, res: Response) {
     if (!version) {
       console.log('v create');
       const diffs = await getPatches(articleId, branch, story);
-      console.log(diffs);
       const main = await articles.findOne({ article_id: articleId, branch: 'main' });
       const result = await versions.create({
         article_id: articleId,
@@ -70,14 +69,37 @@ export async function saveArticle(req: Request, res: Response) {
   }
 }
 
+export async function getAllArticle(req: Request, res: Response) {
+  try {
+    const projectId = req.params.projectId;
+    const branch = req.params.branch;
+    const result = await articles
+      .find({ project_id: projectId, $or: [{ branch: 'main' }, { branch }] }, { article_id: 1, title: 1 })
+      .exec();
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    if (err instanceof ValidationError) {
+      res.status(400).json({ errors: err.message });
+      return;
+    }
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: 'get Article failed' });
+  }
+}
+
 export async function getArticle(req: Request, res: Response) {
   try {
+    const edit = res.locals.edit;
     const articleId = req.params.articleId;
     const branch = req.params.branch;
     const number = req.query.number !== undefined ? (req.query.number as string) : '0';
-    const article = await articles.findOne({ article_id: articleId, branch });
     const result = await getStory(articleId, branch, number);
-    res.status(200).json(result);
+    res.status(200).json({ ...result, edit });
   } catch (err) {
     console.log(err);
     if (err instanceof ValidationError) {
@@ -95,8 +117,11 @@ export async function getArticle(req: Request, res: Response) {
 export async function compareArticle(req: Request, res: Response) {
   try {
     const articleId = req.params.articleId;
-    const branchId = req.params.branchId;
-    const result = await getCompare(articleId, branchId);
+    const branch = req.params.branch;
+    if (branch == 'main') {
+      throw new ValidationError('main is not comparable');
+    }
+    const result = await getCompare(articleId, branch);
     res.status(200).json(result);
   } catch (err) {
     console.log(err);

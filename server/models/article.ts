@@ -1,6 +1,5 @@
 import { Schema, Types } from 'mongoose';
 import mongoose from 'mongoose';
-import { object } from 'zod';
 
 const articleSchema = new Schema({
   id: Types.ObjectId,

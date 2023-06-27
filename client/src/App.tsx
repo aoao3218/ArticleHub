@@ -1,21 +1,33 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './components/Home';
-import NotFound from './components/NotFounds';
-import PostEdit from './components/PostEdit';
-import Editor from './components/Edit';
-import MediumEditor from './components/MediumEditor';
-
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import NotFound from './pages/NotFounds';
+import Backstage from './pages/Backstage';
+import MediumEditor from './pages/MediumEditor';
+import Account from './pages/Account';
+import Profile from './pages/Profile';
+import Project from './components/BackstagePage/Project';
+import Compare from './pages/Compare';
+import { TeamCtxProvider } from './context/TeamCtx';
+import { ProjectCtxProvider } from './context/ProjectCtx';
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/edit" element={<PostEdit />} />
-        <Route path="/edit2" element={<Editor />} />
-        <Route path="/article/:branch?/:id?/:number?" element={<MediumEditor />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <TeamCtxProvider>
+      <ProjectCtxProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/team/:teamId" element={<Backstage />}>
+              <Route path=":projectId" element={<Project />} />
+            </Route>
+            <Route path="/mergeCompare/:projectId/:branch" element={<Compare />} />
+            <Route path="/article/:projectId/:branch?/:id?/:number?" element={<MediumEditor />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </ProjectCtxProvider>
+    </TeamCtxProvider>
   );
 };
 

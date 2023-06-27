@@ -1,27 +1,52 @@
 import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from '../utils/errorHandler.js';
 import users from '../models/user.js';
-import team from '../models/team.js';
+import teams from '../models/team.js';
+
+interface Team {
+  toObject(): unknown;
+  _id: string;
+  name: string;
+  owner: string;
+  member: { id: string; name: string }[];
+  own?: boolean;
+}
+
+export async function getTeam(req: Request, res: Response) {
+  try {
+    const userId = res.locals?.userId;
+    const team = await teams.find({ $or: [{ owner: userId }, { 'member._id': userId }] });
+    const result = team.map((team) => {
+      const teamObj: Team = team.toObject();
+      teamObj.own = team.owner.toString() === userId;
+      return teamObj;
+    });
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: 'get Team failed' });
+  }
+}
 
 export async function createTeam(req: Request, res: Response) {
   try {
     const { name, emails } = req.body;
-    const userId = res.locals?.userId ?? false;
-    if (!userId) {
-      throw new ValidationError('No userId');
-    }
+    const userId = res.locals?.userId;
+    const { io } = res.locals;
     const owner = await users.findById(userId);
     if (!owner) {
       throw new ValidationError('No such account');
     }
-    // const owner = await users.findOne({ email: '123@gmail.com' });
     const member = await users.find({ email: { $in: emails } });
-    const result = await team.create({
+    const result = await teams.create({
       name: name,
       owner: owner,
       member: member,
     });
-
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
@@ -51,7 +76,7 @@ export async function inviteMember(req: Request, res: Response) {
       throw new ValidationError('team not found or not owner');
     }
     const update = { $push: { member: { $each: member } } };
-    const result = await team.updateOne(filter, update);
+    const result = await teams.updateOne(filter, update);
     res.status(200).json(result);
   } catch (err) {
     if (err instanceof ValidationError) {

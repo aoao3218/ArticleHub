@@ -9,7 +9,7 @@ interface Version {
   update_index: Number;
 }
 
-const versionSchema = new Schema({
+const versionSchema = new Schema<Version>({
   article_id: String,
   branch: String,
   history: [Array],

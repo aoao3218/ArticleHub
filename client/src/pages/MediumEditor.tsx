@@ -11,6 +11,9 @@ const Edit = () => {
   const jwt = localStorage.getItem('jwt');
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
+  const [version, setVersion] = useState<number>();
+  const [currentVersion, setCurrentVersion] = useState<number>();
+  const [branchUpdateYet, setBranchUpdate] = useState(false);
   const editorRef = useRef<HTMLDivElement | null>(null);
   const params = useParams();
   const articleId = params.id;
@@ -19,10 +22,11 @@ const Edit = () => {
   const [teamId, teamName]: string[] = team?.split('-') ?? [];
   const { projectId } = useParams();
   const [id, name]: string[] = projectId?.split('-') ?? [];
-  const number = params.number;
-  const url = `http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${number}`;
+  const url = `http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${currentVersion}`;
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
+
+  console.log(version);
 
   const handleSave = () => {
     const story = editorRef.current?.innerHTML;
@@ -107,7 +111,7 @@ const Edit = () => {
         buttons: ['bold', 'italic', 'underline', 'anchor'],
       },
       anchor: {
-        customClassOption: undefined, // Set it to undefined instead of null
+        customClassOption: undefined,
         customClassOptionText: 'Button',
         linkValidation: false,
         placeholderText: 'Paste or type a link',
@@ -126,7 +130,12 @@ const Edit = () => {
         .then((data) => {
           console.log(data);
           setTitle(data.title);
+          setVersion(data.version);
+          setCurrentVersion(data.version);
           editor.setContent(data.story);
+          if (data.noUpdate) {
+            setBranchUpdate(true);
+          }
           if (data.edit == false && editorRef.current) {
             const titleInput = document.getElementById('title') as HTMLInputElement;
             const btn = document.querySelectorAll('button');
@@ -143,7 +152,7 @@ const Edit = () => {
     return () => {
       editor.destroy();
     };
-  }, []);
+  }, [currentVersion]);
 
   return (
     <div>
@@ -173,11 +182,29 @@ const Edit = () => {
       </div>
 
       <div className="edit">
-        <p className="row">
-          <p style={{ margin: '0 4px' }}>{teamName}</p>&gt;<p style={{ margin: '0 4px' }}>{name}</p>
-          &gt;
-          <p style={{ margin: '0 4px' }}>{title}</p>
-        </p>
+        <div className="row" style={{ justifyContent: 'space-between', marginTop: '16px' }}>
+          <div className="row">
+            <p style={{ margin: '0 4px' }}>{teamName}</p>&gt;<p style={{ margin: '0 4px' }}>{name}</p>
+            &gt;
+            <p style={{ margin: '0 4px' }}>{branch}</p>
+            &gt;
+            <p style={{ margin: '0 4px' }}>{title}</p>
+          </div>
+          <div>
+            version:
+            <select
+              name="version"
+              value={currentVersion}
+              onChange={(e) => setCurrentVersion(Number(e.target.value))}
+              style={{ padding: '2px 12px', marginLeft: '12px' }}
+            >
+              <option>0</option>
+              {version !== 0 &&
+                !branchUpdateYet &&
+                Array.from({ length: version ?? 0 }, (_, i) => <option key={i + 1}>{i + 1}</option>)}
+            </select>
+          </div>
+        </div>
         <input id="title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
         <div ref={editorRef} className="editable" />
       </div>

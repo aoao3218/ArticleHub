@@ -34,24 +34,24 @@ export async function getStory(articleId: string, branch: string, number: string
     const historySlice = article.history.slice(0, version);
     const history = historySlice.flat();
     const story = dmp.patch_apply(history as patch_obj[], article?.story as string)[0];
-    return { title, story };
+    return { title, story, version: article.history.length };
   } else {
     const articleMain = await articles.findOne({ article_id: articleId, branch: 'main' });
     const articleBranch = await versions.findOne({ article_id: articleId, branch });
     const title = articleMain?.title;
     if (!articleMain) {
-      return { title: '', story: '' };
+      return { title: '', story: '', version: '' };
     }
     if (!articleBranch) {
       const story = dmp.patch_apply(articleMain?.history.flat() as patch_obj[], articleMain?.story as string)[0];
-      return { title, story };
+      return { title, story, version: articleMain?.history.length, noUpdate: true };
     }
     const previousIndex = articleBranch?.previous_index;
     const mainHistory = articleMain?.history.slice(0, previousIndex);
     const branchHistory = articleBranch?.history.slice(0, version);
     const history = [...(mainHistory?.flat() as patch_obj[]), ...(branchHistory.flat() as patch_obj[])];
     const story = dmp.patch_apply(history as patch_obj[], articleMain?.story as string)[0];
-    return { title, story };
+    return { title, story, version: articleBranch?.history.length };
   }
 }
 

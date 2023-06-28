@@ -16,6 +16,7 @@ const MergeCompare = () => {
   const [id, name]: string[] = projectId?.split('-') ?? [];
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
+  const updateCount = 0;
 
   // function getProject() {
   //   fetch(`http://localhost:3000/api/project/${teamId}`, {
@@ -63,14 +64,17 @@ const MergeCompare = () => {
           <div onClick={back} className="row">
             <span style={{ margin: 'auto 8px' }}>&lt;</span>
             <h5 style={{ margin: 'auto 0' }}>Back</h5>
-            <p className="row" style={{ justifyContent: 'center', alignContent: 'center', marginLeft: '24px' }}>
+            <div
+              className="row"
+              style={{ justifyContent: 'center', alignContent: 'center', margin: 'auto', paddingLeft: '24px' }}
+            >
               update branch
               <p style={{ margin: '0 8px', padding: '0 8px', backgroundColor: '#ececec', borderRadius: '4px' }}>
                 {branch}
               </p>
               content to
               <p style={{ margin: '0 8px', padding: '0 8px', backgroundColor: '#ececec', borderRadius: '4px' }}>main</p>
-            </p>
+            </div>
           </div>
           <div style={{ margin: 'auto 0' }}>
             <button onClick={merge(branch)}>merge</button>
@@ -80,7 +84,7 @@ const MergeCompare = () => {
       <div className="row" style={{ width: '100%' }}>
         <ArticleCtxProvider>
           <ArticleList />
-          <CompareContent />
+          <CompareContent update={updateCount} />
         </ArticleCtxProvider>
       </div>
     </div>

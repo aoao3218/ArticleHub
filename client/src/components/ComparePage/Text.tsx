@@ -7,9 +7,10 @@ import MediumEditor, { CoreOptions } from 'medium-editor';
 
 interface Branch {
   branch?: string;
+  update: number;
 }
 
-const Text = ({ branch }: Branch) => {
+const Text = ({ branch, update }: Branch) => {
   const jwt = localStorage.getItem('jwt');
   const editorRef = useRef<HTMLDivElement | null>(null);
   const { projectId } = useParams();
@@ -34,7 +35,7 @@ const Text = ({ branch }: Branch) => {
           }
         });
     }
-  }, [projectId, branch, articleId]);
+  }, [projectId, branch, articleId, update]);
 
   useEffect(() => {
     const editor = new MediumEditor(editorRef.current!, {

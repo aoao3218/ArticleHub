@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import teams from '../models/team.js';
 import articles from '../models/article.js';
 import { Types } from 'mongoose';
+import projects from '../models/project.js';
+import { object } from 'zod';
 
 export const authorization = (roleNames: string[]) => async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -90,6 +92,31 @@ export const articleAuthorization = async (req: Request, res: Response, next: Ne
 
     res.locals.edit = false;
     console.log('false');
+    next();
+  } catch (err) {
+    console.log(err);
+    if (err instanceof Error) {
+      res.status(403).json({ errors: err.message });
+    } else {
+      res.status(403).json({ errors: 'authorization failed' });
+    }
+  }
+};
+
+export const branchAuthorization = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = res.locals.userId;
+    const { branch } = req.params;
+    const { projectId } = req.params;
+    const project = await projects.findById(projectId);
+    const result = project?.branch.find((obj) => {
+      obj.name == branch && obj.createBy.toString() == userId;
+    });
+
+    if (!result) {
+      return res.status(403).json({ errors: 'authorization failed' });
+    }
+
     next();
   } catch (err) {
     console.log(err);

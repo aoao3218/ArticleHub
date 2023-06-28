@@ -1,4 +1,3 @@
-import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 interface Branch {
@@ -20,8 +19,6 @@ interface BranchProps {
 }
 
 const Branch = ({ project }: BranchProps) => {
-  const { teamId } = useParams();
-
   return (
     <div>
       <ul>
@@ -30,7 +27,7 @@ const Branch = ({ project }: BranchProps) => {
             {branch.name}
             <div>
               {branch.merge_request && (
-                <Link to={`/compare/merge/${teamId}/${project._id}-${project.name}/${branch.name}`}>
+                <Link to={`/compare/merge/${project._id}-${project.name}/${branch.name}`}>
                   <button>merge</button>
                 </Link>
               )}

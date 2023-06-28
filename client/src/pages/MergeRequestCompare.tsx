@@ -14,6 +14,7 @@ const MergeRequestCompare = () => {
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
   const [update, setUpdate] = useState(false);
+  const [updateCount, setCount] = useState(0);
 
   const back = () => {
     navigate(-1);
@@ -48,9 +49,16 @@ const MergeRequestCompare = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        if (data.errors) {
+          setMessage(true);
+          setUpdate(true);
+          setMgs(data.errors);
+          return;
+        }
         setUpdate(false);
         setMessage(true);
         setMgs('update success');
+        setCount(updateCount + 1);
       })
       .catch((err) => console.log(err));
   };
@@ -63,14 +71,17 @@ const MergeRequestCompare = () => {
           <div onClick={back} className="row">
             <span style={{ margin: 'auto 8px' }}>&lt;</span>
             <h5 style={{ margin: 'auto 0' }}>Back</h5>
-            <p className="row" style={{ justifyContent: 'center', alignContent: 'center', marginLeft: '24px' }}>
+            <div
+              className="row"
+              style={{ justifyContent: 'center', alignContent: 'center', margin: 'auto', paddingLeft: '24px' }}
+            >
               update branch
               <p style={{ margin: '0 8px', padding: '0 8px', backgroundColor: '#ececec', borderRadius: '4px' }}>
                 {branch}
               </p>
               content to
               <p style={{ margin: '0 8px', padding: '0 8px', backgroundColor: '#ececec', borderRadius: '4px' }}>main</p>
-            </p>
+            </div>
           </div>
           <div style={{ margin: 'auto 0' }}>
             {update && (
@@ -85,7 +96,7 @@ const MergeRequestCompare = () => {
       <div className="row" style={{ width: '100%' }}>
         <ArticleCtxProvider>
           <ArticleList />
-          <CompareContent />
+          <CompareContent update={updateCount} />
         </ArticleCtxProvider>
       </div>
     </div>

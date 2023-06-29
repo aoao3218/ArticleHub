@@ -6,7 +6,6 @@ import {
   getAllArticle,
   getProjectPublish,
   publishArticle,
-  getAllPublish,
 } from '../controllers/article.js';
 import { articleAuthorization } from '../middleware/authorization.js';
 const router = Router();
@@ -15,7 +14,7 @@ router.route('/article/publish/:projectId').get(getProjectPublish);
 
 router.route('/article/publish/:projectId/:articleId').post(publishArticle);
 
-router.route('/article/compare/:branch/:articleId').get(compareArticle);
+router.route('/article/compare/:branch/:articleId/:version').get(compareArticle);
 
 router.route('/article/:projectId/:branch').get(getAllArticle);
 

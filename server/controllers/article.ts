@@ -98,7 +98,8 @@ export async function getArticle(req: Request, res: Response) {
     const edit = res.locals.edit;
     const articleId = req.params.articleId;
     const branch = req.params.branch;
-    const number = req.query.number !== undefined ? (req.query.number as string) : '0';
+    const number = req.query.number !== undefined ? (req.query.number as string) : undefined;
+    console.log(`query:${number}`);
     const result = await getStory(articleId, branch, number);
     res.status(200).json({ ...result, edit });
   } catch (err) {
@@ -119,10 +120,11 @@ export async function compareArticle(req: Request, res: Response) {
   try {
     const articleId = req.params.articleId;
     const branch = req.params.branch;
+    const { version } = req.params;
     if (branch == 'main') {
       throw new ValidationError('main is not comparable');
     }
-    const result = await getCompare(articleId, branch);
+    const result = await getCompare(articleId, branch, version);
     res.status(200).json(result);
   } catch (err) {
     console.log(err);

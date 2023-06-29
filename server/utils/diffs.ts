@@ -26,9 +26,11 @@ export async function getPatches(articleId: string, branch: string, story: strin
   }
 }
 
-export async function getStory(articleId: string, branch: string, number: string) {
+export async function getStory(articleId: string, branch: string, number: string | undefined) {
   const article = await articles.findOne({ article_id: articleId, branch });
-  const version = !Number.isNaN(parseInt(number, 10)) ? parseInt(number, 10) : article?.history.length;
+  const version = Number.isNaN(parseInt(number as string, 10))
+    ? article?.history.length || 0
+    : parseInt(number as string, 10);
   if (article) {
     const title = article.title;
     const historySlice = article.history.slice(0, version);
@@ -48,6 +50,10 @@ export async function getStory(articleId: string, branch: string, number: string
     }
     const previousIndex = articleBranch?.previous_index;
     const mainHistory = articleMain?.history.slice(0, previousIndex);
+    // if (version == 0) {
+    //   const story = dmp.patch_apply(mainHistory?.flat() as patch_obj[], articleMain?.story as string)[0];
+    //   return { title, story: story, version: articleBranch?.history.length };
+    // }
     const branchHistory = articleBranch?.history.slice(0, version);
     const history = [...(mainHistory?.flat() as patch_obj[]), ...(branchHistory.flat() as patch_obj[])];
     const story = dmp.patch_apply(history as patch_obj[], articleMain?.story as string)[0];
@@ -58,7 +64,6 @@ export async function getStory(articleId: string, branch: string, number: string
 function differentText(main: string, branch: string) {
   const diffs = dmp.diff_main(main, branch);
   dmp.diff_cleanupSemantic(diffs);
-  console.log(diffs);
 
   let diffText = '';
   for (const [op, data] of diffs) {
@@ -73,7 +78,7 @@ function differentText(main: string, branch: string) {
   return diffText;
 }
 
-export async function getCompare(articleId: string, branch: string) {
+export async function getCompare(articleId: string, branch: string, version: string) {
   const [article] = await articles.aggregate([
     {
       $match: {
@@ -92,19 +97,22 @@ export async function getCompare(articleId: string, branch: string) {
       },
     },
   ]);
+  const versionNumber = Number(version);
   const title = article.title;
-  const mainStory = dmp.patch_apply(article.history.flat() as patch_obj[], article.story as string)[0];
-  const branchHistory = article.versions[0].history;
+  const branchHistory = article.versions[0]?.history;
   if (!branchHistory) {
-    const diffText = await differentText('', mainStory);
+    const story = dmp.patch_apply(
+      article.history.slice(0, versionNumber).flat() as patch_obj[],
+      article.story as string
+    )[0];
+    const diffText = await differentText('', story);
     return { title, story: diffText };
   }
+  const mainStory = dmp.patch_apply(article.history.flat() as patch_obj[], article.story as string)[0];
   const previousIndex = article.versions[0].previous_index;
   const mainHistory = article.history.slice(0, previousIndex) as patch_obj[];
-  const history = [...mainHistory.flat(), ...branchHistory.flat()];
+  const history = [...mainHistory.flat(), ...branchHistory.slice(0, versionNumber).flat()];
   const branchStory = dmp.patch_apply(history as patch_obj[], article.story as string)[0];
-  console.log(mainStory);
-  console.log(branchStory);
   const diffText = await differentText(mainStory, branchStory);
   return { title, story: diffText };
 }

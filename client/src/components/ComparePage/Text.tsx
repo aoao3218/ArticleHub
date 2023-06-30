@@ -14,13 +14,14 @@ const Text = ({ branch, update }: Branch) => {
   const jwt = localStorage.getItem('jwt');
   const editorRef = useRef<HTMLDivElement | null>(null);
   const { projectId } = useParams();
+  const [id, name]: string[] = projectId?.split('-') ?? [];
   const { articleId } = useContext(ArticleCtx);
   const [title, setTitle] = useState('');
   const number = '';
 
   useEffect(() => {
     if (articleId) {
-      fetch(`http://localhost:3000/api/article/${projectId}/${branch}/${articleId}?number=${number}`, {
+      fetch(`http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${number}`, {
         headers: new Headers({
           Authorization: `Bearer ${jwt}`,
         }),

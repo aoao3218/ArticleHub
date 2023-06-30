@@ -39,7 +39,7 @@ export async function signIn(req: Request, res: Response) {
     const { email, password } = req.body;
     const user = await users.findOne({ email });
     if (!user) {
-      throw new Error('User does not exist.');
+      throw new Error('Email does not exist.');
     }
     const isValidPassword = await argon2.verify(user.password, password);
     if (!isValidPassword) {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import FailedMessage from './FailedMessage';
+import { toast } from 'react-toastify';
 
 interface CreateProps {
   onClose: () => void;
@@ -36,6 +37,7 @@ const CreateProject: React.FC<CreateProps> = ({ onClose, create }) => {
           setMgs(data.errors);
           return;
         }
+        toast.success('Create Success');
         create();
       })
       .catch((err) => {
@@ -55,7 +57,7 @@ const CreateProject: React.FC<CreateProps> = ({ onClose, create }) => {
           Create Project
         </p>
         {message && <FailedMessage mgs={mgs} />}
-        <input type="text" value={Name} onChange={handleNameChange} placeholder="Team Name" />
+        <input type="text" value={Name} onChange={handleNameChange} placeholder="Project Name" />
         <button onClick={handleCreate}>Create</button>
       </div>
     </div>

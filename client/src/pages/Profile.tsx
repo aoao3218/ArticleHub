@@ -1,7 +1,7 @@
 import { useEffect, useContext } from 'react';
-import Header from '../components/Header';
 import { TeamCtx } from '../context/TeamCtx';
 import TeamList from '../components/TeamList';
+import Header from '../components/Header';
 
 const Profile = () => {
   const { setTeams } = useContext(TeamCtx);

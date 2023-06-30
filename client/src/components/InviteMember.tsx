@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { EmailsCtx } from '../context/EmailCtx';
 import MemberInput from './MemberInput';
 import FailedMessage from './FailedMessage';
+import { toast } from 'react-toastify';
 
 interface CreateProps {
   teamId?: string;
@@ -32,6 +33,7 @@ const InviteMember: React.FC<CreateProps> = ({ teamId, onClose, create }) => {
           setMgs(data.errors);
           return;
         }
+        toast.success('Invite Success');
         create();
       })
       .catch((err) => {

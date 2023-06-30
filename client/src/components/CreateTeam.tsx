@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { EmailsCtx } from '../context/EmailCtx';
 import MemberInput from './MemberInput';
 import FailedMessage from './FailedMessage';
+import { toast } from 'react-toastify';
 
 interface CreateTeamProps {
   onClose: () => void;
@@ -34,9 +35,10 @@ const CreateTeam: React.FC<CreateTeamProps> = ({ onClose, create }) => {
         console.log(data);
         if (data.errors) {
           setMessage(true);
-          setMgs(data.errors);
+          toast.error(data.errors);
           return;
         }
+        toast.success('Create Success');
         create();
       })
       .catch((err) => {

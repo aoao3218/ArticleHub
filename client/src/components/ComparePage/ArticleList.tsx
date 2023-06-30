@@ -14,6 +14,7 @@ const ArticleList = () => {
   const { setArticleId } = useContext(ArticleCtx);
   const [id, name]: string[] = projectId?.split('-') ?? [];
   const [articles, setArticles] = useState<Article[]>([]);
+  const [tab, setTab] = useState('');
 
   useEffect(() => {
     fetch(`http://localhost:3000/api/branch/compare/${id}/${branch}`, {
@@ -35,7 +36,15 @@ const ArticleList = () => {
         <p>change articles</p>
         <ul>
           {articles.map((article) => (
-            <li onClick={() => setArticleId(article.article_id)}>{article.title}</li>
+            <li
+              onClick={() => {
+                setArticleId(article.article_id);
+                setTab(article.article_id);
+              }}
+              className={`nav ${tab === `${article.article_id}` ? 'navbarActive' : ''}`}
+            >
+              {article.title}
+            </li>
           ))}
         </ul>
       </div>

@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { JWTCtx } from '../context/JWTCtx';
 
 const SignIN = () => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const { setJWT } = useContext(JWTCtx);
 
   const navigate = useNavigate();
 
@@ -16,15 +19,14 @@ const SignIN = () => {
         },
         body: JSON.stringify({ email: userEmail, password: userPassword, provider: 'native' }),
       })
-        .then((res) => {
-          if (!res.ok) {
-            console.log('Login failed');
-            return;
-          }
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((data) => {
           console.log(data);
+          if (data.errors) {
+            toast.error(data.errors);
+            return;
+          }
+          setJWT(data.token);
           localStorage.setItem('jwt', data.token);
           return navigate('/');
         })

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import FailedMessage from './FailedMessage';
+import { toast } from 'react-toastify';
 
 interface CreateProps {
   projectId?: string;
@@ -34,6 +35,7 @@ const CreateBranch: React.FC<CreateProps> = ({ projectId, onClose, create }) => 
           setMgs(data.errors);
           return;
         }
+        toast.success('Create Success');
         create();
       })
       .catch((err) => {
@@ -53,7 +55,7 @@ const CreateBranch: React.FC<CreateProps> = ({ projectId, onClose, create }) => 
           Create Branch
         </p>
         {message && <FailedMessage mgs={mgs} />}
-        <input type="text" value={Name} onChange={handleNameChange} placeholder=" Name" />
+        <input type="text" value={Name} onChange={handleNameChange} placeholder="Branch Name" />
         <button onClick={handleCreate}>Create</button>
       </div>
     </div>

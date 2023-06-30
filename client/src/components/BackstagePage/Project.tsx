@@ -67,7 +67,7 @@ const Project = () => {
     return <div>no projects</div>;
   }
   return (
-    <div className="content" style={{ width: '100%', margin: 'auto' }}>
+    <div className="content" style={{ width: '100%', margin: 'auto', backgroundColor: '#FAFAFA' }}>
       {openBranch && <CreateBranch onClose={closeCreateBranch} create={createBranch} projectId={projectId} />}
       {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
       <div className="row btw" style={{ marginBottom: '32px' }}>
@@ -87,14 +87,12 @@ const Project = () => {
         </div>
         <div className="row">
           {currentBranch !== 'main' && (
-            <button style={{ marginLeft: '12px' }}>
-              <Link
-                to={`/compare/mergeRequest/${projectId}-${project.name}/${currentBranch}`}
-                style={{ color: '#ffff' }}
-              >
-                merge request
-              </Link>
-            </button>
+            <Link
+              to={`/compare/mergeRequest/${projectId}-${project.name}/${currentBranch}`}
+              style={{ color: '#ffff', margin: 'auto' }}
+            >
+              <button style={{ marginLeft: '12px' }}>merge to main</button>
+            </Link>
           )}
           <button
             style={{ marginLeft: '12px' }}
@@ -104,24 +102,25 @@ const Project = () => {
           >
             new branch
           </button>
-          <button style={{ marginLeft: '12px' }}>
-            <Link to={`/article/${team.name}/${projectId}-${project.name}/${currentBranch}`} style={{ color: '#ffff' }}>
-              new article{' '}
-            </Link>
-          </button>
+          <Link
+            to={`/article/${teamId}-${team.name}/${projectId}-${project.name}/${currentBranch}`}
+            style={{ color: '#ffff', margin: 'auto' }}
+          >
+            <button style={{ marginLeft: '12px' }}>new article </button>
+          </Link>
         </div>
       </div>
       <div className="tabs" style={{ textAlign: 'left' }}>
-        <span className="tab" onClick={() => setTab('article')}>
-          Article
+        <span className={`tab ${tab === 'article' ? 'tabActive' : ''}`} onClick={() => setTab('article')}>
+          Draft
         </span>
         {team.own && (
-          <span className="tab" onClick={() => setTab('branch')}>
+          <span className={`tab ${tab === 'branch' ? 'tabActive' : ''}`} onClick={() => setTab('branch')}>
             Branch Control
           </span>
         )}
         {team.own && (
-          <span className="tab" onClick={() => setTab('publish')}>
+          <span className={`tab ${tab === 'publish' ? 'tabActive' : ''}`} onClick={() => setTab('publish')}>
             Publish
           </span>
         )}

@@ -35,11 +35,15 @@ const Publish = () => {
 
   return (
     <div>
-      <ul>
-        {publish.map((ele) => (
-          <li>{ele.title}</li>
-        ))}
-      </ul>
+      <table style={{ width: '100%' }}>
+        <tbody>
+          <tr>
+            {publish.map((ele) => (
+              <td>{ele.title}</td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };

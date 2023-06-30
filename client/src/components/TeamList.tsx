@@ -2,14 +2,12 @@ import { useContext, useState, useEffect } from 'react';
 import { TeamCtx } from '../context/TeamCtx';
 import { Link } from 'react-router-dom';
 import CreateTeam from './CreateTeam';
-import MessagePOP from './MessagePOP';
 
 const TeamList = () => {
   const { teams, setTeams } = useContext(TeamCtx);
   const [user, setUser] = useState<string | null>(null);
   const [isOpen, setCreateTeam] = useState(false);
   const jwt = localStorage.getItem('jwt');
-  const [message, setMessage] = useState(false);
 
   function getTeams() {
     fetch('http://localhost:3000/api/team', {
@@ -39,7 +37,6 @@ const TeamList = () => {
 
   const createSuccess = () => {
     setCreateTeam(false);
-    setMessage(true);
     getTeams();
   };
 
@@ -48,24 +45,48 @@ const TeamList = () => {
   };
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#FAFAFA', height: 'calc(100vh - 61px)' }}>
       {isOpen && <CreateTeam onClose={closeCreateTeam} create={createSuccess} />}
-      {message && <MessagePOP msg={'create success'} onClose={() => setMessage(false)} />}
       <div className="profile">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p className="user">{user}</p>
           <button onClick={() => setCreateTeam(true)}>create Team</button>
         </div>
         <div className="tabs">
-          <span className="tab">Teams</span>
+          <span className="tab tabActive">Teams</span>
         </div>
-        <ul>
-          {teams.map((team) => (
-            <Link to={`/team/${team._id}`} key={team._id}>
-              <li>{team.name}</li>
-            </Link>
-          ))}
-        </ul>
+        {teams.length !== 0 ? (
+          <table style={{ width: '100%' }}>
+            <tbody>
+              <tr>
+                {teams.map((team) => (
+                  <td key={team._id}>
+                    <Link to={`/team/${team._id}`} style={{ display: 'block', width: '100%', cursor: 'pointer' }}>
+                      {team.name}
+                    </Link>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        ) : (
+          <div
+            style={{
+              width: 'auto',
+              height: '320px',
+              margin: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}
+          >
+            You Don't Have any Teams
+            <br />
+            Please Create Your Team
+          </div>
+        )}
       </div>
     </div>
   );

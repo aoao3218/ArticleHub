@@ -3,7 +3,7 @@ import ArticleList from '../components/ComparePage/ArticleList';
 import { ArticleCtxProvider } from '../context/ArticleCtx';
 import CompareContent from '../components/ComparePage/CompareContent';
 import { useState } from 'react';
-import MessagePOP from '../components/MessagePOP';
+import { toast } from 'react-toastify';
 
 const MergeRequestCompare = () => {
   const jwt = localStorage.getItem('jwt');
@@ -11,8 +11,6 @@ const MergeRequestCompare = () => {
   const { branch } = useParams();
   const { projectId } = useParams();
   const [id, name]: string[] = projectId?.split('-') ?? [];
-  const [message, setMessage] = useState(false);
-  const [mgs, setMgs] = useState('');
   const [update, setUpdate] = useState(false);
   const [updateCount, setCount] = useState(0);
 
@@ -30,9 +28,8 @@ const MergeRequestCompare = () => {
       .then((data) => {
         console.log(data);
         if (data.errors) {
-          setMessage(true);
           setUpdate(true);
-          setMgs(data.errors);
+          toast.error(data.errors);
           return;
         }
         navigate(-1);
@@ -50,14 +47,12 @@ const MergeRequestCompare = () => {
       .then((data) => {
         console.log(data);
         if (data.errors) {
-          setMessage(true);
           setUpdate(true);
-          setMgs(data.errors);
+          toast.error(data.errors);
           return;
         }
         setUpdate(false);
-        setMessage(true);
-        setMgs('update success');
+        toast.success('update success');
         setCount(updateCount + 1);
       })
       .catch((err) => console.log(err));
@@ -65,7 +60,7 @@ const MergeRequestCompare = () => {
 
   return (
     <div>
-      {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
+      {/* {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />} */}
       <div className="head">
         <div className="content" style={{ width: 'auto' }}>
           <div onClick={back} className="row">

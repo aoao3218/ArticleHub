@@ -69,9 +69,11 @@ export const articleAuthorization = async (req: Request, res: Response, next: Ne
     const userId = res.locals.userId;
     const branch = req.params.branch;
     const articleId = req.params.articleId;
-    const article: article | null = await articles.findOne({ article_id: articleId }).populate('project_id');
-    const isOwner = article?.project_id?.createBy?.toString() === userId;
-
+    const projectId = req.params.projectId;
+    const project = await projects.findById(projectId);
+    // const article: article | null = await articles.findOne({ article_id: articleId }).populate('project_id');
+    const isOwner = project?.createBy?.toString() === userId;
+    console.log(project);
     if (branch === 'main' && isOwner) {
       console.log('owner');
       res.locals.edit = true;
@@ -79,7 +81,7 @@ export const articleAuthorization = async (req: Request, res: Response, next: Ne
       return;
     }
 
-    const hasMatchingBranch = article?.project_id?.branch.some(
+    const hasMatchingBranch = project?.branch.some(
       (branchObj) => branchObj.createBy?.toString() === userId && branchObj.name === branch
     );
 
@@ -109,10 +111,7 @@ export const branchAuthorization = async (req: Request, res: Response, next: Nex
     const { branch } = req.params;
     const { projectId } = req.params;
     const project = await projects.findById(projectId);
-    const result = project?.branch.find((obj) => {
-      obj.name == branch && obj.createBy.toString() == userId;
-    });
-
+    const result = project?.branch.find((obj) => obj.name === branch && obj.createBy.toString() === userId);
     if (!result) {
       return res.status(403).json({ errors: 'authorization failed' });
     }

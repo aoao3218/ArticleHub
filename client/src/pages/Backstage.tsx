@@ -2,8 +2,8 @@ import { useContext, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { ProjectCtxProvider } from '../context/ProjectCtx';
 import { TeamCtx } from '../context/TeamCtx';
-import Header from '../components/Header';
 import Navbar from '../components/BackstagePage/Navbar';
+import Header from '../components/Header';
 
 const Backstage = () => {
   const { setTeams } = useContext(TeamCtx);

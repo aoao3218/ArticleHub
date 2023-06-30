@@ -3,6 +3,7 @@
   width: 100%;
   height: 60px;
   border-bottom: 1px solid #ececec;
+  background-color: #fff;
 }
 
 .head .content {
@@ -23,23 +24,44 @@
   padding: 0px 24px;
 }
 
+.home {
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  margin: 80px auto;
+  max-width: 1240px;
+}
+
+.account {
+  padding-left: 24px;
+  margin-left: 12px;
+  border-left: 1px solid #ececec;
+}
+
 .edit {
   display: flex;
   flex-direction: column;
-  width: 800px;
+  min-height: calc(100vh - 61px);
+  width: auto;
+  background-color: #fafafa;
   margin: auto;
   padding: 0 32px;
 }
 
 .editable {
-  padding: 4px 16px;
-  width: 100%;
+  padding: 4px 8px;
+  width: -webkit-fill-available;
+  min-height: 100%;
+  background-color: #fff;
+  margin-bottom: 24px;
 }
 
 #title {
+  display: flex;
   font-size: 24px;
   border: 0;
   margin: 20px 0px;
+  width: -webkit-fill-available;
 }
 
 .column {
@@ -68,7 +90,7 @@ input {
 #changeTab {
   margin-left: 10px;
   background-color: transparent;
-  color: #1a8917;
+  color: #edb320;
 }
 
 .profile {
@@ -116,15 +138,19 @@ input {
 
 .tabs {
   border-bottom: 1px solid #ececec;
-  height: 38px;
+  height: 35px;
 }
 
 .tab {
   width: auto;
   height: 100%;
   margin-right: 32px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #2e2e2e;
+  padding-bottom: 12px;
+}
+
+.tabActive {
+  font-weight: bold;
+  border-bottom: 4px solid #edb320;
 }
 
 ul {
@@ -136,8 +162,8 @@ li {
   list-style: none;
   margin: 0;
   padding: 8px 10px;
-  background-color: rgb(250, 250, 250);
-  border: 1px solid rgb(230, 230, 230);
+  /* background-color: rgb(250, 250, 250); */
+  border-bottom: 1px solid rgb(230, 230, 230);
   border-radius: 4px;
   margin-bottom: 8px;
 }
@@ -156,6 +182,7 @@ li {
   padding: 20px 0px;
   border-top: 1px solid #ececec;
 }
+
 .nav_btn {
   width: 100%;
   margin: 8px auto;
@@ -170,8 +197,12 @@ li {
 }
 
 select {
-  height: 32px;
+  height: 28px;
   margin: auto;
+  border-radius: 4px;
+  width: 120px;
+  padding: 0 4px;
+  background-color: transparent;
 }
 .menu {
   display: block;
@@ -180,7 +211,7 @@ select {
   right: 8px;
   z-index: 700;
   overflow-y: auto;
-  width: 264px;
+  width: 200px;
   box-shadow: 0 1px 4px rgba(230, 230, 230, 1);
   border-radius: 4px;
   background-color: #fff;
@@ -201,6 +232,23 @@ select {
   margin: 0 auto;
   padding: 32px 0;
   border-bottom: 1px solid rgba(230, 230, 230, 1);
+}
+
+.nav {
+  border: 0;
+  color: #2e2e2e;
+  transition: 0.1s;
+}
+
+.nav:hover {
+  border: 1px solid #edb320;
+}
+
+.navbarActive {
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #edb320;
+  padding: 8px 14px;
 }
 
 @keyframes logo-spin {

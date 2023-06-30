@@ -3,8 +3,8 @@ import ArticleList from '../components/ComparePage/ArticleList';
 import { ArticleCtxProvider } from '../context/ArticleCtx';
 import CompareContent from '../components/ComparePage/CompareContent';
 import { useState, useContext } from 'react';
-import MessagePOP from '../components/MessagePOP';
 import { ProjectCtx } from '../context/ProjectCtx';
+import { toast } from 'react-toastify';
 
 const MergeCompare = () => {
   const jwt = localStorage.getItem('jwt');
@@ -14,8 +14,6 @@ const MergeCompare = () => {
   const { projectId } = useParams();
   const { setProjects } = useContext(ProjectCtx);
   const [id, name]: string[] = projectId?.split('-') ?? [];
-  const [message, setMessage] = useState(false);
-  const [mgs, setMgs] = useState('');
   const updateCount = 0;
 
   // function getProject() {
@@ -46,8 +44,7 @@ const MergeCompare = () => {
       .then((data) => {
         console.log(data);
         if (data.errors) {
-          setMessage(true);
-          setMgs(data.errors);
+          toast.error(data.errors);
           return;
         }
         navigate(-1);
@@ -57,8 +54,7 @@ const MergeCompare = () => {
 
   return (
     <div>
-      {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
-
+      {/* {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />} */}
       <div className="head">
         <div className="content" style={{ width: 'auto' }}>
           <div onClick={back} className="row">

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 interface Branch {
   _id: string;
@@ -19,23 +20,31 @@ interface BranchProps {
 }
 
 const Branch = ({ project }: BranchProps) => {
+  const { teamId } = useParams();
+
   return (
     <div>
-      <ul>
-        {project.branch.map((branch) => (
-          <li className="row" style={{ justifyContent: 'space-between' }}>
-            {branch.name}
-            <div>
-              {branch.merge_request && (
-                <Link to={`/compare/merge/${project._id}-${project.name}/${branch.name}`}>
-                  <button>merge</button>
-                </Link>
-              )}
-              <button style={{ marginLeft: '16px' }}>delete</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <table style={{ width: '100%' }}>
+        <tbody>
+          <tr>
+            {project.branch.map((branch) => (
+              <td className="row" style={{ justifyContent: 'space-between' }}>
+                {branch.name}
+                <div>
+                  {branch.merge_request && (
+                    <Link to={`/compare/merge/${teamId}/${project._id}-${project.name}/${branch.name}`}>
+                      <button className="btn_third">merge</button>
+                    </Link>
+                  )}
+                  <button style={{ marginLeft: '16px' }} className="btn_third">
+                    delete
+                  </button>
+                </div>
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };

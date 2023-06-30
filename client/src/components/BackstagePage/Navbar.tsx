@@ -9,12 +9,14 @@ import MessagePOP from '../MessagePOP';
 const Navbar = () => {
   const { teamId } = useParams();
   const { teams } = useContext(TeamCtx);
+  const { projectId } = useParams();
   const { projects, setProjects } = useContext(ProjectCtx);
   const [isCreateProject, setCreateProject] = useState(false);
   const [invite, setInvite] = useState(false);
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
   const jwt = localStorage.getItem('jwt');
+  const [tab, setTab] = useState(projectId);
 
   useEffect(() => {
     fetch(`http://localhost:3000/api/project/${teamId}`, {
@@ -44,6 +46,7 @@ const Navbar = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         setProjects(data);
       })
       .catch((err) => console.log(err));
@@ -55,13 +58,11 @@ const Navbar = () => {
 
   const inviteSuccess = () => {
     setInvite(false);
-    setMessage(true);
-    setMgs('invite success');
   };
 
   const team = teams.find((team) => team._id == teamId);
 
-  if (!team) {
+  if (!team || !projects) {
     return <div>no team</div>;
   }
   return (
@@ -70,11 +71,21 @@ const Navbar = () => {
       {invite && <InviteMember onClose={closeInvite} create={inviteSuccess} teamId={teamId} />}
       {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
       <div>
-        <h2 style={{ margin: '32px 0px' }}>{team.name}</h2>
+        <div style={{ marginTop: '20px' }}>
+          <Link to={'/profile'}>
+            <span style={{ marginRight: '8px' }}>&lt;</span>back to teams
+          </Link>
+        </div>
+        <h2 style={{ margin: '24px 0' }}>{team.name}</h2>
         <ul>
           {projects.map((project) => (
             <Link to={`${project._id}`} key={project._id}>
-              <li>{project.name}</li>
+              <li
+                className={`nav ${tab === `${project._id}` ? 'navbarActive' : ''}`}
+                onClick={() => setTab(project._id)}
+              >
+                {project.name}
+              </li>
             </Link>
           ))}
         </ul>

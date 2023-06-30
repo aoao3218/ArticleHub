@@ -12,6 +12,9 @@ export async function saveArticle(req: Request, res: Response) {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
     const { title, story } = req.body;
+    if (!title) {
+      throw new ValidationError('title should not be empty');
+    }
     const article = await articles.findOne({ article_id: articleId });
     if (articleId == 'undefined') {
       console.log('a create');

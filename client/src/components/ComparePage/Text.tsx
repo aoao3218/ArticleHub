@@ -14,7 +14,7 @@ const Text = ({ branch, update }: Branch) => {
   const jwt = localStorage.getItem('jwt');
   const editorRef = useRef<HTMLDivElement | null>(null);
   const { projectId } = useParams();
-  const [id, name]: string[] = projectId?.split('-') ?? [];
+  const id: string = projectId?.split('-')[0] ?? '';
   const { articleId } = useContext(ArticleCtx);
   const [title, setTitle] = useState('');
   const number = '';

@@ -2,8 +2,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ArticleList from '../components/ComparePage/ArticleList';
 import { ArticleCtxProvider } from '../context/ArticleCtx';
 import CompareContent from '../components/ComparePage/CompareContent';
-import { useState, useContext } from 'react';
-import { ProjectCtx } from '../context/ProjectCtx';
 import { toast } from 'react-toastify';
 
 const MergeCompare = () => {
@@ -12,20 +10,8 @@ const MergeCompare = () => {
   const { teamId } = useParams();
   const { branch } = useParams();
   const { projectId } = useParams();
-  const { setProjects } = useContext(ProjectCtx);
-  const [id, name]: string[] = projectId?.split('-') ?? [];
+  const id: string = projectId?.split('-')[0] ?? '';
   const updateCount = 0;
-
-  // function getProject() {
-  //   fetch(`http://localhost:3000/api/project/${teamId}`, {
-  //     headers: new Headers({
-  //       Authorization: `Bearer ${jwt}`,
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => setProjects(data))
-  //     .catch((err) => console.log(err));
-  // }
 
   const back = () => {
     navigate(-1);
@@ -54,7 +40,6 @@ const MergeCompare = () => {
 
   return (
     <div>
-      {/* {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />} */}
       <div className="head">
         <div className="content" style={{ width: 'auto' }}>
           <div onClick={back} className="row">

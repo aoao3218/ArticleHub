@@ -50,10 +50,6 @@ export async function getStory(articleId: string, branch: string, number: string
     }
     const previousIndex = articleBranch?.previous_index;
     const mainHistory = articleMain?.history.slice(0, previousIndex);
-    // if (version == 0) {
-    //   const story = dmp.patch_apply(mainHistory?.flat() as patch_obj[], articleMain?.story as string)[0];
-    //   return { title, story: story, version: articleBranch?.history.length };
-    // }
     const branchHistory = articleBranch?.history.slice(0, version);
     const history = [...(mainHistory?.flat() as patch_obj[]), ...(branchHistory.flat() as patch_obj[])];
     const story = dmp.patch_apply(history as patch_obj[], articleMain?.story as string)[0];

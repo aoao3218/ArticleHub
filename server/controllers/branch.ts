@@ -31,6 +31,7 @@ export async function createBranch(req: Request, res: Response) {
   try {
     const projectId = req.params.projectId;
     const { name } = req.body;
+    if (!name) throw new ValidationError('Should have Branch Name');
     const userId = res.locals?.userId;
     const project: Project | null = await projects.findById(projectId).populate('team_id');
     const isOwner = userId === project?.team_id?.owner.toString();

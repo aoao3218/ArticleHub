@@ -26,7 +26,7 @@ const Header = () => {
     <div>
       <div className="header">
         <h3 style={{ margin: 'auto 0' }}>
-          <Link to={'/'}>Medium</Link>
+          <Link to={'/'}>ArticleHub</Link>
         </h3>
         {jwt ? (
           <div className="row" style={{ margin: 'auto 0' }}>

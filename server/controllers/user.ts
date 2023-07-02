@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as argon2 from 'argon2';
 import signJWT, { EXPIRE_TIME } from '../utils/signJWT.js';
 import users from '../models/user.js';
+import { ValidationError } from '../utils/errorHandler.js';
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -14,9 +15,7 @@ export async function signUp(req: Request, res: Response) {
   try {
     const { name, email, password } = req.body;
     const check = await users.find({ email });
-    if (check.length >= 1) {
-      throw new Error('user exist');
-    }
+    if (check.length >= 1) throw new Error('user exist');
     const hash = await argon2.hash(password);
     const user = await users.create({
       name,
@@ -24,7 +23,8 @@ export async function signUp(req: Request, res: Response) {
       password: hash,
       provider: 'native',
     });
-    res.status(200).json(user);
+    const token = await signJWT(user._id.toString());
+    res.status(200).json({ token });
   } catch (err) {
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });

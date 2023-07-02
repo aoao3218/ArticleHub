@@ -4,7 +4,6 @@ import { Link, useParams } from 'react-router-dom';
 import { TeamCtx } from '../../context/TeamCtx';
 import { ProjectCtx } from '../../context/ProjectCtx';
 import InviteMember from '../InviteMember';
-import MessagePOP from '../MessagePOP';
 
 const Navbar = () => {
   const { teamId } = useParams();
@@ -13,10 +12,9 @@ const Navbar = () => {
   const { projects, setProjects } = useContext(ProjectCtx);
   const [isCreateProject, setCreateProject] = useState(false);
   const [invite, setInvite] = useState(false);
-  const [message, setMessage] = useState(false);
-  const [mgs, setMgs] = useState('');
   const jwt = localStorage.getItem('jwt');
   const [tab, setTab] = useState(projectId);
+  console.log(jwt);
 
   useEffect(() => {
     fetch(`http://localhost:3000/api/project/${teamId}`, {
@@ -37,8 +35,6 @@ const Navbar = () => {
 
   const createProject = () => {
     setCreateProject(false);
-    setMessage(true);
-    setMgs('create project');
     fetch(`http://localhost:3000/api/project/${teamId}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
@@ -69,7 +65,6 @@ const Navbar = () => {
     <div className="navbar">
       {isCreateProject && <CreateProject onClose={closeProject} create={createProject} />}
       {invite && <InviteMember onClose={closeInvite} create={inviteSuccess} teamId={teamId} />}
-      {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
       <div>
         <div style={{ marginTop: '20px' }}>
           <Link to={'/profile'}>

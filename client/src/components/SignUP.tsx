@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { toast } from 'react-toastify';
-interface Props {
-  toSignIn: () => void;
-}
+import { useNavigate } from 'react-router-dom';
+import { JWTCtx } from '../context/JWTCtx';
 
-const SignUP = ({ toSignIn }: Props) => {
+const SignUP = () => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [userName, setUserName] = useState('');
+  const navigate = useNavigate();
+  const { setJWT } = useContext(JWTCtx);
 
   const handleSubmit = async () => {
     fetch('http://localhost:3000/api/user/signup', {
@@ -25,7 +26,9 @@ const SignUP = ({ toSignIn }: Props) => {
           return;
         }
         toast.success('Create Success!!');
-        toSignIn();
+        setJWT(data.token);
+        localStorage.setItem('jwt', data.token);
+        return navigate('/');
       })
       .catch((err) => {
         console.log(err);

@@ -5,6 +5,12 @@ import articles from '../models/article.js';
 import versions from '../models/version.js';
 import { v4 as uuidv4 } from 'uuid';
 import publishes from '../models/publish.js';
+import CryptoJS from 'crypto-js';
+import dotenv from 'dotenv';
+import branch from '../middleware/branch.js';
+dotenv.config();
+
+const secretKey = process.env.Secret_Key || '';
 
 export async function saveArticle(req: Request, res: Response) {
   try {
@@ -12,9 +18,7 @@ export async function saveArticle(req: Request, res: Response) {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
     const { title, story } = req.body;
-    if (!title) {
-      throw new ValidationError('title should not be empty');
-    }
+    if (!title) throw new ValidationError('title should not be empty');
     const article = await articles.findOne({ article_id: articleId });
     if (articleId == 'undefined') {
       console.log('a create');
@@ -32,6 +36,7 @@ export async function saveArticle(req: Request, res: Response) {
     } else if (article?.branch == branch) {
       console.log('a save');
       const diffs = await getPatches(articleId, branch, story);
+      if (diffs.length == 0) throw new ValidationError('no change');
       const filter = { article_id: articleId, branch };
       const update = { $push: { history: diffs } };
       const result = await articles.findOneAndUpdate(filter, update, { new: true });
@@ -42,6 +47,7 @@ export async function saveArticle(req: Request, res: Response) {
     if (!version) {
       console.log('v create');
       const diffs = await getPatches(articleId, branch, story);
+      if (diffs.length == 0) throw new ValidationError('no change');
       const main = await articles.findOne({ article_id: articleId, branch: 'main' });
       const result = await versions.create({
         article_id: articleId,
@@ -55,6 +61,7 @@ export async function saveArticle(req: Request, res: Response) {
     }
     console.log('v save');
     const diffs = await getPatches(articleId, branch, story);
+    if (diffs.length == 0) throw new ValidationError('no change');
     const filter = { article_id: articleId, branch };
     const update = { $push: { history: diffs } };
     const result = await versions.findOneAndUpdate(filter, update, { new: true });
@@ -102,9 +109,35 @@ export async function getArticle(req: Request, res: Response) {
     const articleId = req.params.articleId;
     const branch = req.params.branch;
     const number = req.query.number !== undefined ? (req.query.number as string) : undefined;
-    console.log(`query:${number}`);
     const result = await getStory(articleId, branch, number);
     res.status(200).json({ ...result, edit });
+  } catch (err) {
+    console.log(err);
+    if (err instanceof ValidationError) {
+      res.status(400).json({ errors: err.message });
+      return;
+    }
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: 'get Article failed' });
+  }
+}
+
+export async function getArticleView(req: Request, res: Response) {
+  try {
+    const { url } = req.params;
+    // const data = CryptoJS.AES.decrypt(url, secretKey);
+    // const dataString = data.toString(CryptoJS.enc.Utf8);
+    // const dataObject = JSON.parse(dataString);
+    // const { articleId, branch, number } = dataObject;
+    // const result = await getStory(articleId, branch, number);
+    const data = atob(url);
+    const dataObject = JSON.parse(data);
+    const { team, project, articleId, branch } = dataObject;
+    const result = `/article/${team}/${project}/${branch}/${articleId}`;
+    res.status(200).redirect(result);
   } catch (err) {
     console.log(err);
     if (err instanceof ValidationError) {
@@ -207,5 +240,25 @@ export async function getAllPublish(req: Request, res: Response) {
       return;
     }
     res.status(500).json({ errors: 'get publish failed' });
+  }
+}
+
+export async function getShortUrl(req: Request, res: Response) {
+  try {
+    const data = req.body;
+    const jsonString = JSON.stringify(data);
+    const url = btoa(jsonString);
+    res.status(200).json(url);
+  } catch (err) {
+    console.log(err);
+    if (err instanceof ValidationError) {
+      res.status(400).json({ errors: err.message });
+      return;
+    }
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: 'get Article failed' });
   }
 }

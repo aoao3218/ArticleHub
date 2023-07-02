@@ -1,9 +1,7 @@
 import CreateProject from '../CreateProject';
 import { useState, useContext } from 'react';
-import { JWTCtx } from '../../context/JWTCtx';
 import { ProjectCtx } from '../../context/ProjectCtx';
 import { useParams } from 'react-router-dom';
-import MessagePOP from '../MessagePOP';
 import { TeamCtx } from '../../context/TeamCtx';
 
 const StartProject = () => {
@@ -12,9 +10,7 @@ const StartProject = () => {
   const { teamId } = useParams();
   const { teams } = useContext(TeamCtx);
   const team = teams.find((team) => team._id == teamId);
-  const { jwt } = useContext(JWTCtx);
-  const [message, setMessage] = useState(false);
-  const [mgs, setMgs] = useState('');
+  const jwt = localStorage.getItem('jwt');
 
   const closeProject = () => {
     setCreateProject(false);
@@ -22,8 +18,6 @@ const StartProject = () => {
 
   const createProject = () => {
     setCreateProject(false);
-    setMessage(true);
-    setMgs('create project');
     fetch(`http://localhost:3000/api/project/${teamId}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
@@ -50,7 +44,6 @@ const StartProject = () => {
       }}
     >
       {isCreateProject && <CreateProject onClose={closeProject} create={createProject} />}
-      {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
       {team?.own && (
         <div style={{ textAlign: 'center', marginTop: '35vh' }}>
           <div style={{ margin: '24px auto', fontSize: '24px' }}>Please Create Project to Manage Your Articles</div>

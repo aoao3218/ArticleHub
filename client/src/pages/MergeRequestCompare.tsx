@@ -10,7 +10,7 @@ const MergeRequestCompare = () => {
   const navigate = useNavigate();
   const { branch } = useParams();
   const { projectId } = useParams();
-  const [id, name]: string[] = projectId?.split('-') ?? [];
+  const id: string = projectId?.split('-')[0] ?? '';
   const [update, setUpdate] = useState(false);
   const [updateCount, setCount] = useState(0);
 

@@ -43,7 +43,7 @@ const App = () => {
             </Route>
             <Route path="/compare/mergeRequest/:projectId/:branch" element={<MergeRequestCompare />} />
             <Route path="/compare/merge/:teamId/:projectId/:branch" element={<MergeCompare />} />
-            <Route path="/article/:team/:projectId/:branch?/:id?/:number?" element={<MediumEditor />} />
+            <Route path="/article/:team/:projectId/:branch?/:articleId?/:number?" element={<MediumEditor />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

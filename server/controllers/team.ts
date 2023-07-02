@@ -35,12 +35,10 @@ export async function getTeam(req: Request, res: Response) {
 export async function createTeam(req: Request, res: Response) {
   try {
     const { name, emails } = req.body;
+    if (!name) throw new ValidationError('Should have Team Name');
     const userId = res.locals?.userId;
-    const { io } = res.locals;
     const owner = await users.findById(userId);
-    if (!owner) {
-      throw new ValidationError('No such account');
-    }
+    if (!owner) throw new ValidationError('No such account');
     const member = await users.find({ email: { $in: emails } });
     const result = await teams.create({
       name: name,

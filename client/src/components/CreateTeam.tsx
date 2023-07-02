@@ -58,7 +58,7 @@ const CreateTeam: React.FC<CreateTeamProps> = ({ onClose, create }) => {
           Create Team
         </p>
         {message && <FailedMessage mgs={mgs} />}
-        <input type="text" value={Name} onChange={handleTeamNameChange} placeholder="Team Name" />
+        <input type="text" value={Name} onChange={handleTeamNameChange} placeholder="Team Name" required />
         <p style={{ margin: ' 20px auto 8px auto' }}>Member</p>
         <EmailsCtx.Provider value={{ emails, setEmails }}>
           <MemberInput />

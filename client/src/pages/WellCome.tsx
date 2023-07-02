@@ -20,7 +20,7 @@ const WellCome = () => {
         <br /> and <strong> management</strong> articles with other people?
       </h1>
       <h1 style={{ fontSize: '68px', margin: '0 0 45px 0' }}>
-        Do it together with <span style={{ color: '#edb320' }}>MediumPlus</span>
+        Do it together with <span style={{ color: '#edb320' }}>ArticleHub</span>
       </h1>
       <div>
         <button className="btn_home" onClick={start}>

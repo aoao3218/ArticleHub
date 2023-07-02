@@ -68,12 +68,9 @@ export const articleAuthorization = async (req: Request, res: Response, next: Ne
   try {
     const userId = res.locals.userId;
     const branch = req.params.branch;
-    const articleId = req.params.articleId;
     const projectId = req.params.projectId;
     const project = await projects.findById(projectId);
-    // const article: article | null = await articles.findOne({ article_id: articleId }).populate('project_id');
     const isOwner = project?.createBy?.toString() === userId;
-    console.log(project);
     if (branch === 'main' && isOwner) {
       console.log('owner');
       res.locals.edit = true;

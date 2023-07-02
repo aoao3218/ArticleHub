@@ -6,26 +6,32 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import '../App.css';
 import { toast } from 'react-toastify';
+import { io } from 'socket.io-client';
 
 const Edit = () => {
+  const [socket] = useState(() => {
+    return io('http://localhost:3000');
+  });
   const jwt = localStorage.getItem('jwt');
+  const domain = window.location.host;
   const navigate = useNavigate();
+  const { team } = useParams();
+  const [teamId, teamName]: string[] = team?.split('-') ?? [];
+  const { branch } = useParams();
+  const { projectId } = useParams();
+  const { articleId } = useParams();
+  const { number } = useParams();
   const [title, setTitle] = useState('');
   const [version, setVersion] = useState<number>(0);
   const [currentVersion, setCurrentVersion] = useState<number>();
   const [branchUpdateYet, setBranchUpdate] = useState(false);
   const editorRef = useRef<HTMLDivElement | null>(null);
   const compareRef = useRef<HTMLDivElement | null>(null);
-  const params = useParams();
-  const articleId = params.id;
-  const branch = params.branch || 'main';
-  const { team } = useParams();
-  const [teamId, teamName]: string[] = team?.split('-') ?? [];
-  const { projectId } = useParams();
   const [id, name]: string[] = projectId?.split('-') ?? [];
-  const url = `http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${currentVersion}`;
+  const url = `http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${number || currentVersion}`;
   const [saveCount, setSaveCount] = useState<number>(0);
   const [compare, setCompare] = useState<boolean>(false);
+  const [visitor, setVisitor] = useState(0);
 
   const handleSave = () => {
     const story = editorRef.current?.innerHTML;
@@ -53,6 +59,7 @@ const Edit = () => {
           }
           toast.success('Save Success!!');
           setSaveCount(saveCount + 1);
+          setCurrentVersion(data.history.length);
         })
         .catch((err) => console.log(err));
     } catch (error) {
@@ -109,6 +116,13 @@ const Edit = () => {
       .catch((err) => console.log(err));
   };
 
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(
+      `${domain}/article/${team}/${projectId}/${branch}/${articleId}/${currentVersion}`
+    );
+    toast.success('copied link to clipboard');
+  };
+
   useEffect(() => {
     const editor = new MediumEditor(editorRef.current!, {
       placeholder: false,
@@ -126,6 +140,97 @@ const Edit = () => {
     } as CoreOptions);
 
     if (articleId) {
+      if (!jwt) {
+        fetch(url)
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            setTitle(data.title);
+            setVersion(data.version);
+            setCurrentVersion(data.version);
+            if (data.noUpdate) {
+              setBranchUpdate(true);
+            }
+            if (editorRef.current) {
+              editorRef.current.innerHTML = data.story;
+            }
+            if (data.edit == false && editorRef.current) {
+              const titleInput = document.getElementById('title') as HTMLInputElement;
+              const btn = document.querySelectorAll('button');
+              titleInput.readOnly = true;
+              btn.forEach((button) => {
+                (button as HTMLButtonElement).disabled = true;
+              });
+              const select = document.querySelector('select');
+              select && (select.disabled = true);
+              editorRef.current.setAttribute('contentEditable', 'false');
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        fetch(url, {
+          headers: new Headers({
+            Authorization: `Bearer ${jwt}`,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            setTitle(data.title);
+            setVersion(data.version);
+            setCurrentVersion(data.version);
+            if (data.noUpdate) {
+              setBranchUpdate(true);
+            }
+            if (editorRef.current) {
+              editorRef.current.innerHTML = data.story;
+            }
+            if (data.edit == false && editorRef.current) {
+              const titleInput = document.getElementById('title') as HTMLInputElement;
+              const btn = document.querySelectorAll('button');
+              titleInput.readOnly = true;
+              btn.forEach((button) => {
+                (button as HTMLButtonElement).disabled = true;
+              });
+              editorRef.current.setAttribute('contentEditable', 'false');
+            }
+          })
+          .catch((err) => console.log(err));
+      }
+    }
+
+    return () => {
+      editor.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!jwt) {
+      fetch(url)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (number) setCurrentVersion(parseInt(number || ''));
+          setTitle(data.title);
+          setVersion(data.version);
+          if (editorRef.current) {
+            editorRef.current.innerHTML = data.story;
+          }
+          if (data.noUpdate) {
+            setBranchUpdate(true);
+          }
+          if (data.edit == false && editorRef.current) {
+            const titleInput = document.getElementById('title') as HTMLInputElement;
+            const btn = document.querySelectorAll('button');
+            titleInput.readOnly = true;
+            btn.forEach((button) => {
+              (button as HTMLButtonElement).disabled = true;
+            });
+            editorRef.current.setAttribute('contentEditable', 'false');
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
       fetch(url, {
         headers: new Headers({
           Authorization: `Bearer ${jwt}`,
@@ -136,12 +241,11 @@ const Edit = () => {
           console.log(data);
           setTitle(data.title);
           setVersion(data.version);
-          setCurrentVersion(data.version);
-          if (data.noUpdate) {
-            setBranchUpdate(true);
-          }
           if (editorRef.current) {
             editorRef.current.innerHTML = data.story;
+          }
+          if (data.noUpdate) {
+            setBranchUpdate(true);
           }
           if (data.edit == false && editorRef.current) {
             const titleInput = document.getElementById('title') as HTMLInputElement;
@@ -155,65 +259,54 @@ const Edit = () => {
         })
         .catch((err) => console.log(err));
     }
-
-    return () => {
-      editor.destroy();
-    };
-  }, []);
+  }, [currentVersion, saveCount]);
 
   useEffect(() => {
-    fetch(url, {
-      headers: new Headers({
-        Authorization: `Bearer ${jwt}`,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setTitle(data.title);
-        setVersion(data.version);
-        if (editorRef.current) {
-          editorRef.current.innerHTML = data.story;
-        }
-        if (data.noUpdate) {
-          setBranchUpdate(true);
-        }
-        if (data.edit == false && editorRef.current) {
-          const titleInput = document.getElementById('title') as HTMLInputElement;
-          const btn = document.querySelectorAll('button');
-          titleInput.readOnly = true;
-          btn.forEach((button) => {
-            (button as HTMLButtonElement).disabled = true;
-          });
-          editorRef.current.setAttribute('contentEditable', 'false');
-        }
-      })
-      .catch((err) => console.log(err));
-  }, [currentVersion, saveCount]);
+    socket.emit('join', { projectId: id, articleId, branch });
+  }, []);
+
+  socket.on('visitors', ({ visitors }) => setVisitor(visitors));
+  socket.on('leave', ({ visitors }) => setVisitor(visitors));
+
+  const back = () => {
+    socket.emit('disconnect');
+  };
 
   return (
     <div style={{ backgroundColor: '#FAFAFA', height: '100%' }}>
-      {/* {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />} */}
       <div className="head">
-        <div className="content">
-          <Link to={`/team/${teamId}/${id}`} style={{ margin: 'auto 0' }}>
-            <div className="row">
-              <span style={{ margin: 'auto 8px' }}>&lt;</span>
-              <h5 style={{ margin: 'auto 0' }}>Back</h5>
-            </div>
-          </Link>
-          <div style={{ margin: 'auto 0' }}>
+        <div className="content" style={{ position: 'relative' }}>
+          {jwt ? (
+            <Link to={`/team/${teamId}/${id}`} style={{ margin: 'auto 0' }} onClick={back}>
+              <div className="row">
+                <span style={{ margin: 'auto 8px' }}>&lt;</span>
+                <h5 style={{ margin: 'auto 0' }}>Back</h5>
+              </div>
+            </Link>
+          ) : (
+            <h3 style={{ margin: 'auto 0' }}>
+              <Link to={'/'}>ArticleHub</Link>
+            </h3>
+          )}
+          <div style={{ margin: 'auto 0', display: 'flex', flexDirection: 'row' }}>
+            <img src="/Users.svg" alt="visitors" style={{ width: '20px', marginRight: '4px' }} />
+            <p style={{ marginRight: '12px', fontSize: '14px' }}>{visitor}</p>
             {branch !== 'main' && (
               <button style={{ marginRight: '10px' }} onClick={handleCompare} className="btn_second">
                 compare
               </button>
             )}
-            {branch == 'main' && (
+            {articleId && branch == 'main' && (
               <button style={{ marginRight: '10px' }} onClick={handlePublish} className="btn_second">
                 publish
               </button>
             )}
-            <button onClick={handleSave}>save</button>
+            {articleId && (
+              <button onClick={copyLink} style={{ marginRight: '10px' }} className="btn_second">
+                Share
+              </button>
+            )}
+            <button onClick={handleSave}>Save</button>
           </div>
         </div>
       </div>
@@ -249,7 +342,6 @@ const Edit = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Article Name Here"
-            // style={{ backgroundColor: '#FAFAFA' }}
             required
           />
           <div

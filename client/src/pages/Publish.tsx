@@ -4,7 +4,6 @@ import Header from '../components/Header';
 const Publish = () => {
   return (
     <div>
-      {' '}
       <Header />
       <PublishList />
     </div>

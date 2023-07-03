@@ -13,12 +13,14 @@ const MergeRequestCompare = () => {
   const id: string = projectId?.split('-')[0] ?? '';
   const [update, setUpdate] = useState(false);
   const [updateCount, setCount] = useState(0);
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   const back = () => {
     navigate(-1);
   };
   const mergeRequest = () => {
-    fetch(`http://localhost:3000/api/branch/merge_request/${id}/${branch}`, {
+    fetch(`${protocol}//${domain}/api/branch/merge_request/${id}/${branch}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
@@ -38,7 +40,7 @@ const MergeRequestCompare = () => {
   };
 
   const handleUpdate = () => {
-    fetch(`http://localhost:3000/api/branch/update/${id}/${branch}`, {
+    fetch(`${protocol}//${domain}/api/branch/update/${id}/${branch}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),
@@ -60,7 +62,6 @@ const MergeRequestCompare = () => {
 
   return (
     <div>
-      {/* {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />} */}
       <div className="head">
         <div className="content" style={{ width: 'auto' }}>
           <div onClick={back} className="row">

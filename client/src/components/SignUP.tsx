@@ -9,9 +9,11 @@ const SignUP = () => {
   const [userName, setUserName] = useState('');
   const navigate = useNavigate();
   const { setJWT } = useContext(JWTCtx);
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   const handleSubmit = async () => {
-    fetch('http://localhost:3000/api/user/signup', {
+    fetch(`${protocol}//${domain}/api/user/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

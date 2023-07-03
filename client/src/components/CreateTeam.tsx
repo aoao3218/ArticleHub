@@ -14,7 +14,8 @@ const CreateTeam: React.FC<CreateTeamProps> = ({ onClose, create }) => {
   const [emails, setEmails] = useState<string[]>(['']);
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
-
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
   const jwt = localStorage.getItem('jwt');
 
   const handleTeamNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +23,7 @@ const CreateTeam: React.FC<CreateTeamProps> = ({ onClose, create }) => {
   };
 
   const handleCreateTeam = () => {
-    fetch('http://localhost:3000/api/team', {
+    fetch(`${protocol}//${domain}/api/team`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,

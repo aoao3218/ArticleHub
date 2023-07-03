@@ -15,9 +15,11 @@ const InviteMember: React.FC<CreateProps> = ({ teamId, onClose, create }) => {
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
   const jwt = localStorage.getItem('jwt');
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   const handleInvite = () => {
-    fetch(`http://localhost:3000/api/team/${teamId}/member`, {
+    fetch(`${protocol}//${domain}/api/team/${teamId}/member`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,

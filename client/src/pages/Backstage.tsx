@@ -8,9 +8,11 @@ import Header from '../components/Header';
 const Backstage = () => {
   const { setTeams } = useContext(TeamCtx);
   const jwt = localStorage.getItem('jwt');
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/team', {
+    fetch(`${protocol}//${domain}/api/team`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),

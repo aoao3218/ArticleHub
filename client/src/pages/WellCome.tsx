@@ -13,7 +13,7 @@ const WellCome = () => {
   };
 
   return (
-    <div className="content home">
+    <div className="content home" style={{ height: 'calc(100% - 61px)' }}>
       <h1 style={{ fontSize: '68px' }}>
         How you <strong style={{ color: '#edb320' }}>control</strong> ,
         <strong style={{ color: '#edb320' }}> align</strong>

@@ -10,10 +10,11 @@ import { io } from 'socket.io-client';
 
 const Edit = () => {
   const [socket] = useState(() => {
-    return io('http://localhost:3000');
+    return io();
   });
   const jwt = localStorage.getItem('jwt');
   const domain = window.location.host;
+  const protocol = window.location.protocol;
   const navigate = useNavigate();
   const { team } = useParams();
   const [teamId, teamName]: string[] = team?.split('-') ?? [];
@@ -28,7 +29,7 @@ const Edit = () => {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const compareRef = useRef<HTMLDivElement | null>(null);
   const [id, name]: string[] = projectId?.split('-') ?? [];
-  const url = `http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${number || currentVersion}`;
+  const url = `${protocol}//${domain}/api/article/${id}/${branch}/${articleId}?number=${number || currentVersion}`;
   const [saveCount, setSaveCount] = useState<number>(0);
   const [compare, setCompare] = useState<boolean>(false);
   const [visitor, setVisitor] = useState(0);
@@ -75,7 +76,7 @@ const Edit = () => {
     compare.destroy();
     setCompare(true);
 
-    fetch(`http://localhost:3000/api/article/compare/${branch}/${articleId}/${currentVersion}`, {
+    fetch(`${protocol}//${domain}/api/article/compare/${branch}/${articleId}/${currentVersion}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ const Edit = () => {
   };
 
   const handlePublish = () => {
-    fetch(`http://localhost:3000/api/article/publish/${id}/${articleId}`, {
+    fetch(`${protocol}//${domain}/api/article/publish/${id}/${articleId}`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
@@ -318,8 +319,6 @@ const Edit = () => {
               <p style={{ margin: '0 4px' }}>{teamName}</p>&gt;<p style={{ margin: '0 4px' }}>{name}</p>
               &gt;
               <p style={{ margin: '0 4px' }}>{branch}</p>
-              &gt;
-              <p style={{ margin: '0 4px' }}>{title}</p>
             </div>
             {articleId && (
               <div>

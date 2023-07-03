@@ -48,9 +48,12 @@ export async function getStory(articleId: string, branch: string, number: string
       const story = dmp.patch_apply(articleMain?.history.flat() as patch_obj[], articleMain?.story as string)[0];
       return { title, story, version: articleMain?.history.length, noUpdate: true };
     }
+    const branchVersion = Number.isNaN(parseInt(number as string, 10))
+      ? articleBranch?.history.length || 0
+      : parseInt(number as string, 10);
     const previousIndex = articleBranch?.previous_index;
     const mainHistory = articleMain?.history.slice(0, previousIndex);
-    const branchHistory = articleBranch?.history.slice(0, version);
+    const branchHistory = articleBranch?.history.slice(0, branchVersion);
     const history = [...(mainHistory?.flat() as patch_obj[]), ...(branchHistory.flat() as patch_obj[])];
     const story = dmp.patch_apply(history as patch_obj[], articleMain?.story as string)[0];
     return { title, story, version: articleBranch?.history.length };

@@ -29,7 +29,7 @@ const Branch = ({ project }: BranchProps) => {
           <tr>
             {project.branch.map((branch) => (
               <td className="row" style={{ justifyContent: 'space-between' }}>
-                {branch.name}
+                <span style={{ margin: 'auto 0' }}>{branch.name}</span>
                 <div>
                   {branch.merge_request && (
                     <Link to={`/compare/merge/${teamId}/${project._id}-${project.name}/${branch.name}`}>

@@ -7,12 +7,13 @@ const SignIN = () => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const { setJWT } = useContext(JWTCtx);
-
   const navigate = useNavigate();
+  const protocol = window.location.protocol;
+  const domain = window.location.host;
 
   const handleSubmit = async () => {
     try {
-      fetch('http://localhost:3000/api/user/signin', {
+      fetch(`${protocol}//${domain}/api/user/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

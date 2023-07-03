@@ -14,10 +14,11 @@ const Navbar = () => {
   const [invite, setInvite] = useState(false);
   const jwt = localStorage.getItem('jwt');
   const [tab, setTab] = useState(projectId);
-  console.log(jwt);
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/project/${teamId}`, {
+    fetch(`${protocol}//${domain}/api/project/${teamId}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),
@@ -35,7 +36,7 @@ const Navbar = () => {
 
   const createProject = () => {
     setCreateProject(false);
-    fetch(`http://localhost:3000/api/project/${teamId}`, {
+    fetch(`${protocol}//${domain}/api/project/${teamId}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),

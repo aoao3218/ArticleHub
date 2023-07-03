@@ -15,9 +15,11 @@ const ArticleList = () => {
   const [id, name]: string[] = projectId?.split('-') ?? [];
   const [articles, setArticles] = useState<Article[]>([]);
   const [tab, setTab] = useState('');
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/branch/compare/${id}/${branch}`, {
+    fetch(`${protocol}//${domain}/api/branch/compare/${id}/${branch}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),

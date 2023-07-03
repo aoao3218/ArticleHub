@@ -11,6 +11,8 @@ const StartProject = () => {
   const { teams } = useContext(TeamCtx);
   const team = teams.find((team) => team._id == teamId);
   const jwt = localStorage.getItem('jwt');
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   const closeProject = () => {
     setCreateProject(false);
@@ -18,7 +20,7 @@ const StartProject = () => {
 
   const createProject = () => {
     setCreateProject(false);
-    fetch(`http://localhost:3000/api/project/${teamId}`, {
+    fetch(`${protocol}//${domain}/api/project/${teamId}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),

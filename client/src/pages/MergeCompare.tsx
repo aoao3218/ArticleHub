@@ -12,13 +12,15 @@ const MergeCompare = () => {
   const { projectId } = useParams();
   const id: string = projectId?.split('-')[0] ?? '';
   const updateCount = 0;
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   const back = () => {
     navigate(-1);
   };
 
   const merge = (branch: string | undefined) => () => {
-    fetch(`http://localhost:3000/api/branch/merge/${id}/${branch}`, {
+    fetch(`${protocol}//${domain}/api/branch/merge/${id}/${branch}`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,

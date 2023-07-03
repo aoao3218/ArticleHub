@@ -10,9 +10,11 @@ interface Publish {
 
 const PublishList = () => {
   const [publish, setPublish] = useState<Publish[] | []>([]);
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/publish`, {
+    fetch(`${protocol}//${domain}/api/publish`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -39,7 +41,7 @@ const PublishList = () => {
         <div className="publishList">
           <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{obj.title}</div>
           <div
-            style={{ maxHeight: '72px', overflow: 'hidden' }}
+            style={{ maxHeight: '72px', overflow: 'inherit' }}
             dangerouslySetInnerHTML={{ __html: firstParagraph(obj.story) }}
           />
         </div>

@@ -8,9 +8,11 @@ const TeamList = () => {
   const [user, setUser] = useState<string | null>(null);
   const [isOpen, setCreateTeam] = useState(false);
   const jwt = localStorage.getItem('jwt');
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   function getTeams() {
-    fetch('http://localhost:3000/api/team', {
+    fetch(`${protocol}//${domain}/api/team`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
@@ -22,7 +24,7 @@ const TeamList = () => {
   }
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/user/profile', {
+    fetch(`${protocol}//${domain}/api/user/profile`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',

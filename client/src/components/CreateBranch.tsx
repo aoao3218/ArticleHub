@@ -13,13 +13,15 @@ const CreateBranch: React.FC<CreateProps> = ({ projectId, onClose, create }) => 
   const jwt = localStorage.getItem('jwt');
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
 
   const handleCreate = () => {
-    fetch(`http://localhost:3000/api/branch/${projectId}`, {
+    fetch(`${protocol}//${domain}/api/branch/${projectId}`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,

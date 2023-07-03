@@ -72,7 +72,7 @@ export const articleAuthorization = async (req: Request, res: Response, next: Ne
     const project = await projects.findById(projectId);
     const isOwner = project?.createBy?.toString() === userId;
     if (branch === 'main' && isOwner) {
-      console.log('owner');
+      // console.log('owner');
       res.locals.edit = true;
       next();
       return;
@@ -83,14 +83,14 @@ export const articleAuthorization = async (req: Request, res: Response, next: Ne
     );
 
     if (hasMatchingBranch) {
-      console.log('member');
+      // console.log('member');
       res.locals.edit = true;
       next();
       return;
     }
 
     res.locals.edit = false;
-    console.log('false');
+    // console.log('false');
     next();
   } catch (err) {
     console.log(err);

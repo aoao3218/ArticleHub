@@ -34,7 +34,6 @@ io.on('connection', (socket) => {
   socket.on('join', async ({ projectId, articleId, branch }) => {
     const id = socket.id;
     const roomId = `${projectId}-${branch}-${articleId}`;
-    console.log(roomId);
     redis.setex(id, 24 * 60 * 60, roomId);
     redis.lpush(roomId, id);
     const visitors = await redis.llen(roomId);
@@ -43,7 +42,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', async () => {
-    console.log('leave');
     const id = socket.id;
     const roomId = await redis.get(id);
     if (roomId) {

@@ -12,10 +12,11 @@ interface Props {
 
 const ShareUrl = ({ team, project, articleId, branch, version, setShoeUrl }: Props) => {
   const [url, setUrl] = useState('');
+  const protocol = window.location.protocol;
 
   useEffect(() => {
-    setUrl(`http://localhost:5173/article/${team}/${project}/${branch}/${articleId}/${version}`);
-    // fetch(`http://localhost:3000/api/article/share`, {
+    setUrl(`${protocol}//localhost:5173/article/${team}/${project}/${branch}/${articleId}/${version}`);
+    // fetch(`${protocol}//localhost:3000/api/article/share`, {
     //   method: 'POST',
     //   headers: new Headers({
     //     Authorization: `Bearer ${jwt}`,
@@ -30,7 +31,7 @@ const ShareUrl = ({ team, project, articleId, branch, version, setShoeUrl }: Pro
     //       return;
     //     }
     //     console.log(data);
-    //     setUrl(`http://localhost:3000/api/view/${data}`);
+    //     setUrl(`${protocol}//localhost:3000/api/view/${data}`);
     //   })
     //   .catch((err) => console.log(err));
   }, [team, project, articleId, branch]);

@@ -6,7 +6,6 @@ import { TeamCtx } from '../../context/TeamCtx';
 import CreateBranch from '../CreateBranch';
 import Article from './Article';
 import Branch from './Branch';
-import MessagePOP from '../MessagePOP';
 import Publish from './Publish';
 
 interface Article {
@@ -25,11 +24,11 @@ const Project = () => {
   const [currentBranch, setCurrentBranch] = useState('main');
   const [articles, setArticles] = useState<Article[]>([]);
   const [tab, setTab] = useState('article');
-  const [message, setMessage] = useState(false);
-  const [mgs, setMgs] = useState('');
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   function getArticle() {
-    fetch(`http://localhost:3000/api/article/${projectId}/${currentBranch}`, {
+    fetch(`${protocol}//${domain}/api/article/${projectId}/${currentBranch}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),
@@ -49,9 +48,7 @@ const Project = () => {
 
   const createBranch = () => {
     setCreateBranch(false);
-    setMessage(true);
-    setMgs('create branch success');
-    fetch(`http://localhost:3000/api/project/${teamId}`, {
+    fetch(`${protocol}//${domain}/api/project/${teamId}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),
@@ -69,7 +66,7 @@ const Project = () => {
   return (
     <div className="content" style={{ width: '100%', margin: 'auto', backgroundColor: '#FAFAFA' }}>
       {openBranch && <CreateBranch onClose={closeCreateBranch} create={createBranch} projectId={projectId} />}
-      {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />}
+      {/* {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />} */}
       <div className="row btw" style={{ marginBottom: '32px' }}>
         <div className="row" style={{ margin: '32px 0' }}>
           <h2>{project.name}</h2>

@@ -13,8 +13,11 @@ const Publish = () => {
   const jwt = localStorage.getItem('jwt');
   const { projectId } = useParams();
   const [publish, setPublish] = useState<Publish[] | []>([]);
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
+
   useEffect(() => {
-    fetch(`http://localhost:3000/api/article/publish/${projectId}`, {
+    fetch(`${protocol}//${domain}/api/article/publish/${projectId}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',

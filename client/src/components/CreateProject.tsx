@@ -15,13 +15,15 @@ const CreateProject: React.FC<CreateProps> = ({ onClose, create }) => {
   const [Name, setTeamName] = useState('');
   const [message, setMessage] = useState(false);
   const [mgs, setMgs] = useState('');
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTeamName(e.target.value);
   };
 
   const handleCreate = () => {
-    fetch(`http://localhost:3000/api/project/${teamId}`, {
+    fetch(`${protocol}//${domain}/api/project/${teamId}`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,

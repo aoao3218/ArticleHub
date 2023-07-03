@@ -17,11 +17,13 @@ const Text = ({ branch, update }: Branch) => {
   const id: string = projectId?.split('-')[0] ?? '';
   const { articleId } = useContext(ArticleCtx);
   const [title, setTitle] = useState('');
-  const number = '';
+  const number = undefined;
+  const domain = window.location.host;
+  const protocol = window.location.protocol;
 
   useEffect(() => {
     if (articleId) {
-      fetch(`http://localhost:3000/api/article/${id}/${branch}/${articleId}?number=${number}`, {
+      fetch(`${protocol}//${domain}/api/article/${id}/${branch}/${articleId}?number=${number}`, {
         headers: new Headers({
           Authorization: `Bearer ${jwt}`,
         }),
@@ -41,11 +43,8 @@ const Text = ({ branch, update }: Branch) => {
   useEffect(() => {
     const editor = new MediumEditor(editorRef.current!, {
       placeholder: false,
-      toolbar: {
-        buttons: ['bold', 'italic', 'underline', 'anchor'],
-      },
       anchor: {
-        customClassOption: undefined, // Set it to undefined instead of null
+        customClassOption: undefined,
         customClassOptionText: 'Button',
         linkValidation: false,
         targetCheckbox: false,

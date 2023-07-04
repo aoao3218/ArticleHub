@@ -36,7 +36,7 @@ const CreateTeam: React.FC<CreateTeamProps> = ({ onClose, create }) => {
         console.log(data);
         if (data.errors) {
           setMessage(true);
-          toast.error(data.errors);
+          setMgs(data.errors);
           return;
         }
         toast.success('Create Success');
@@ -59,7 +59,14 @@ const CreateTeam: React.FC<CreateTeamProps> = ({ onClose, create }) => {
           Create Team
         </p>
         {message && <FailedMessage mgs={mgs} />}
-        <input type="text" value={Name} onChange={handleTeamNameChange} placeholder="Team Name" required />
+        <input
+          type="text"
+          pattern="[^/\\?]*"
+          value={Name}
+          onChange={handleTeamNameChange}
+          placeholder="Team Name"
+          required
+        />
         <p style={{ margin: ' 20px auto 8px auto' }}>Member</p>
         <EmailsCtx.Provider value={{ emails, setEmails }}>
           <MemberInput />

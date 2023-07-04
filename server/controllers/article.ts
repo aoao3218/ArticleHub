@@ -5,9 +5,7 @@ import articles from '../models/article.js';
 import versions from '../models/version.js';
 import { v4 as uuidv4 } from 'uuid';
 import publishes from '../models/publish.js';
-import CryptoJS from 'crypto-js';
 import dotenv from 'dotenv';
-import branch from '../middleware/branch.js';
 dotenv.config();
 
 const secretKey = process.env.Secret_Key || '';
@@ -52,7 +50,7 @@ export async function saveArticle(req: Request, res: Response) {
       const result = await versions.create({
         article_id: articleId,
         branch,
-        history: diffs,
+        history: [diffs],
         previous_index: main?.history.length,
         update_index: main?.history.length,
       });
@@ -87,7 +85,6 @@ export async function getAllArticle(req: Request, res: Response) {
     const result = await articles
       .find({ project_id: projectId, $or: [{ branch: 'main' }, { branch }] }, { article_id: 1, title: 1 })
       .exec();
-
     res.status(200).json(result);
   } catch (err) {
     console.log(err);

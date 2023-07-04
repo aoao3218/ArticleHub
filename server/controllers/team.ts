@@ -36,6 +36,8 @@ export async function createTeam(req: Request, res: Response) {
   try {
     const { name, emails } = req.body;
     if (!name) throw new ValidationError('Should have Team Name');
+    const validRegex = /^[A-Za-z0-9_]+$/;
+    if (!validRegex.test(name)) throw new ValidationError('Should not have Special characters');
     const userId = res.locals?.userId;
     const owner = await users.findById(userId);
     if (!owner) throw new ValidationError('No such account');

@@ -29,8 +29,9 @@ const Edit = () => {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const compareRef = useRef<HTMLDivElement | null>(null);
   const [id, name]: string[] = projectId?.split('-') ?? [];
-  const url = `${protocol}//${domain}/api/article/${id}/${branch}/${articleId}?number=${number || currentVersion}`;
-  const [saveCount, setSaveCount] = useState<number>(0);
+  const url = `${protocol}//${domain}/api/article/${id}/${branch}/${articleId}?number=${
+    number || (currentVersion ? currentVersion - 1 : undefined)
+  }`;
   const [compare, setCompare] = useState<boolean>(false);
   const [visitor, setVisitor] = useState(0);
 
@@ -59,8 +60,8 @@ const Edit = () => {
             navigate(newUrl);
           }
           toast.success('Save Success!!');
-          setSaveCount(saveCount + 1);
-          setCurrentVersion(data.history.length);
+          setBranchUpdate(false);
+          setCurrentVersion(data.history.length + 1);
         })
         .catch((err) => console.log(err));
     } catch (error) {
@@ -76,12 +77,17 @@ const Edit = () => {
     compare.destroy();
     setCompare(true);
 
-    fetch(`${protocol}//${domain}/api/article/compare/${branch}/${articleId}/${currentVersion}`, {
-      headers: new Headers({
-        Authorization: `Bearer ${jwt}`,
-        'Content-Type': 'application/json',
-      }),
-    })
+    fetch(
+      `${protocol}//${domain}/api/article/compare/${branch}/${articleId}/${
+        currentVersion ? currentVersion - 1 : undefined
+      }`,
+      {
+        headers: new Headers({
+          Authorization: `Bearer ${jwt}`,
+          'Content-Type': 'application/json',
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.errors) {
@@ -178,8 +184,8 @@ const Edit = () => {
           .then((data) => {
             console.log(data);
             setTitle(data.title);
-            setVersion(data.version);
-            setCurrentVersion(data.version);
+            setVersion(data.version + 1);
+            setCurrentVersion(data.version + 1);
             if (data.noUpdate) {
               setBranchUpdate(true);
             }
@@ -213,7 +219,7 @@ const Edit = () => {
           console.log(data);
           if (number) setCurrentVersion(parseInt(number || ''));
           setTitle(data.title);
-          setVersion(data.version);
+          setVersion(data.version + 1);
           if (editorRef.current) {
             editorRef.current.innerHTML = data.story;
           }
@@ -229,6 +235,7 @@ const Edit = () => {
             });
             editorRef.current.setAttribute('contentEditable', 'false');
           }
+          return;
         })
         .catch((err) => console.log(err));
     } else {
@@ -241,7 +248,7 @@ const Edit = () => {
         .then((data) => {
           console.log(data);
           setTitle(data.title);
-          setVersion(data.version);
+          setVersion(data.version + 1);
           if (editorRef.current) {
             editorRef.current.innerHTML = data.story;
           }
@@ -257,10 +264,11 @@ const Edit = () => {
             });
             editorRef.current.setAttribute('contentEditable', 'false');
           }
+          return;
         })
         .catch((err) => console.log(err));
     }
-  }, [currentVersion, saveCount]);
+  }, [currentVersion]);
 
   useEffect(() => {
     socket.emit('join', { projectId: id, articleId, branch });
@@ -291,7 +299,7 @@ const Edit = () => {
           )}
           <div style={{ margin: 'auto 0', display: 'flex', flexDirection: 'row' }}>
             <img src="/Users.svg" alt="visitors" style={{ width: '20px', marginRight: '4px' }} />
-            <p style={{ marginRight: '12px', fontSize: '14px' }}>{visitor}</p>
+            <p style={{ margin: 'auto', marginRight: '12px', fontSize: '14px' }}>{visitor}</p>
             {branch !== 'main' && (
               <button style={{ marginRight: '10px' }} onClick={handleCompare} className="btn_second">
                 compare
@@ -329,8 +337,8 @@ const Edit = () => {
                   onChange={(e) => setCurrentVersion(Number(e.target.value))}
                   style={{ padding: '2px 12px', marginLeft: '12px' }}
                 >
-                  {branchUpdateYet && <option>0</option>}
-                  {!branchUpdateYet && Array.from({ length: version + 1 }, (_, i) => <option key={i}>{i}</option>)}
+                  {branchUpdateYet && <option>1</option>}
+                  {!branchUpdateYet && Array.from({ length: version }, (_, i) => <option key={i + 1}>{i + 1}</option>)}
                 </select>
               </div>
             )}
@@ -341,6 +349,7 @@ const Edit = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Article Name Here"
+            style={{ whiteSpace: 'pre-wrap' }}
             required
           />
           <div

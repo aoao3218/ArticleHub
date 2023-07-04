@@ -3,7 +3,6 @@ import teams from '../models/team.js';
 import articles from '../models/article.js';
 import { Types } from 'mongoose';
 import projects from '../models/project.js';
-import { object } from 'zod';
 
 export const authorization = (roleNames: string[]) => async (req: Request, res: Response, next: NextFunction) => {
   try {

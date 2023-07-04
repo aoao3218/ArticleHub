@@ -23,18 +23,22 @@ const Project = () => {
   const [openBranch, setCreateBranch] = useState(false);
   const [currentBranch, setCurrentBranch] = useState('main');
   const [articles, setArticles] = useState<Article[]>([]);
-  const [tab, setTab] = useState('article');
+  const [tab, setTab] = useState<string>('article');
   const domain = window.location.host;
   const protocol = window.location.protocol;
+  console.log(currentBranch);
 
   function getArticle() {
-    fetch(`${protocol}//${domain}/api/article/${projectId}/${currentBranch}`, {
+    fetch(`${protocol}//${domain}/api/article/all/${projectId}/${currentBranch}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),
     })
       .then((res) => res.json())
-      .then((data) => setArticles(data))
+      .then((data) => {
+        console.log(data);
+        setArticles(data);
+      })
       .catch((err) => console.log(err));
   }
 
@@ -66,7 +70,6 @@ const Project = () => {
   return (
     <div className="content" style={{ width: '100%', margin: 'auto', backgroundColor: '#FAFAFA' }}>
       {openBranch && <CreateBranch onClose={closeCreateBranch} create={createBranch} projectId={projectId} />}
-      {/* {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />} */}
       <div className="row btw" style={{ marginBottom: '32px' }}>
         <div className="row" style={{ margin: '32px 0' }}>
           <h2>{project.name}</h2>
@@ -103,7 +106,7 @@ const Project = () => {
             to={`/article/${teamId}-${team.name}/${projectId}-${project.name}/${currentBranch}`}
             style={{ color: '#ffff', margin: 'auto' }}
           >
-            <button style={{ marginLeft: '12px' }}>new article </button>
+            <button style={{ marginLeft: '12px' }}>new Draft</button>
           </Link>
         </div>
       </div>

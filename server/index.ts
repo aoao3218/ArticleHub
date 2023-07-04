@@ -14,8 +14,13 @@ import db from './db.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { Redis } from 'ioredis';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const redis = new Redis();
+const redis = new Redis({
+  port: 6379,
+  host: process.env.REDIS_HOST,
+});
 const app = express();
 const port = 3000;
 const dirname = path.resolve('../client/dist/index.html');

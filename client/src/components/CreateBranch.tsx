@@ -57,7 +57,7 @@ const CreateBranch: React.FC<CreateProps> = ({ projectId, onClose, create }) => 
           Create Branch
         </p>
         {message && <FailedMessage mgs={mgs} />}
-        <input type="text" value={Name} onChange={handleNameChange} placeholder="Branch Name" />
+        <input type="text" pattern="^[^/?]*$" value={Name} onChange={handleNameChange} placeholder="Branch Name" />
         <button onClick={handleCreate}>Create</button>
       </div>
     </div>

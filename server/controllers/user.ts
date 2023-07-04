@@ -5,9 +5,9 @@ import users from '../models/user.js';
 import { ValidationError } from '../utils/errorHandler.js';
 
 const COOKIE_OPTIONS = {
-  ${protocol}Only: true,
+  httpOnly: true,
   path: '/',
-  secure: false,
+  secure: true,
   sameSite: 'strict',
 } as const;
 
@@ -60,7 +60,7 @@ export async function signIn(req: Request, res: Response) {
 
 async function getFbProfileData(userToken: string) {
   const profile = await fetch(
-    `${protocol}s//graph.facebook.com/v16.0/me?fields=id,name,email,picture&access_token=${userToken}`
+    `https//graph.facebook.com/v16.0/me?fields=id,name,email,picture&access_token=${userToken}`
   )
     .then((res) => res.json())
     .then((data) => data);

@@ -29,7 +29,7 @@ router.route('/article/publish/:projectId/:articleId').post(authenticate, publis
 
 router.route('/article/compare/:branch/:articleId/:version').get(authenticate, compareArticle);
 
-router.route('/article/:projectId/:branch').get(authenticate, getAllArticle);
+router.route('/article/all/:projectId/:branch').get(authenticate, getAllArticle);
 
 router.route('/article/:projectId/:branch/:articleId').post(authenticate, saveArticle);
 

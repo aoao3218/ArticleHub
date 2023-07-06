@@ -125,7 +125,7 @@ const Edit = () => {
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(
-      `${domain}/article/${team}/${projectId}/${branch}/${articleId}/${currentVersion}`
+      `${protocol}//${domain}/article/${team}/${projectId}/${branch}/${articleId}/${currentVersion}`
     );
     toast.success('copied link to clipboard');
   };

@@ -2,7 +2,8 @@ node_modules
 /dist
 uploads/*
 !uploads/.gitkeep 
-
+private.key
+cert.crt
 .env
 
 /db/dbVersion.txt

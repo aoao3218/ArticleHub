@@ -10,8 +10,9 @@ import { errorHandler } from './utils/errorHandler.js';
 import authenticate from './middleware/authenticate.js';
 import path from 'path';
 import cors from 'cors';
+import fs from 'fs';
 import db from './db.js';
-import { createServer } from 'http';
+import { createServer } from 'https';
 import { Server } from 'socket.io';
 import { Redis } from 'ioredis';
 import dotenv from 'dotenv';
@@ -23,9 +24,17 @@ const redis = new Redis({
 });
 const app = express();
 const port = 3000;
-const dirname = path.resolve('../client/dist/index.html');
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
+const dirname = path.resolve(process.env.CLIENT_HTML ?? '');
+const keyDir = path.resolve(process.env.PRIVATE_KEY ?? '');
+const certDir = path.resolve(process.env.CRT ?? '');
+const httpsServer = createServer(
+  {
+    key: fs.readFileSync(keyDir),
+    cert: fs.readFileSync(certDir),
+  },
+  app
+);
+const io = new Server(httpsServer, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
@@ -76,6 +85,6 @@ app.get('*', (req, res) => {
 });
 app.use(errorHandler);
 
-httpServer.listen(port, () => {
+httpsServer.listen(port, () => {
   console.log(`Medium listening on port ${port}`);
 });

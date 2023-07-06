@@ -1,14 +1,9 @@
-FROM redis
-CMD ["redis-server"]
-
-
 FROM node:18
 WORKDIR /usr/app
+COPY server/.env server/.env
 COPY server server
-RUN cd server && npm update && npm install && npm run build
-COPY server/.env server/dist/.env
-RUN echo "REDIS_HOST=172.17.0.2" >> .env
+RUN cd server && npm install && npm run build
 COPY client client
-RUN cd client && npm update && npm install && npm run build
-WORKDIR /usr/app/server/dist
-CMD ["node", "index.js"]
+RUN cd client && npm install && npm run build
+WORKDIR /usr/app/server/
+CMD ["node", "dist/index.js"]

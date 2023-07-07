@@ -1,0 +1,55 @@
+name: Deploy to EC2
+on: [push]
+jobs:
+  #   build:
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - uses: actions/checkout@v3
+  #       - name: Use Node.js
+  #         uses: actions/setup-node@v3
+  #         with:
+  #           node-version: '18.x'
+  #           script: |
+  #             cd /server
+  #             npm ci
+  #             npm run build --if-present
+  #             npm test
+  #   - run: npm ci
+  #   - run: npm run build --if-present
+  #   - run: npm test
+
+  deploy:
+    # needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: deploy to ec2
+        uses: appleboy/ssh-action@master
+        env:
+          MONGODB: ${{ secrets.MONGODB }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
+          PRIVATE_KEY: ${{ vars.PRIVATE_KEY }}
+          CRT: ${{ vars.CRT }}
+          CLIENT_HTML: ${{ vars.CLIENT_HTML }}
+        with:
+          host: '${{ secrets.HOST_DNS }}'
+          username: '${{ secrets.EC2_USERNAME }}'
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /hone/ubuntu/ArticleHub
+            git switch main
+
+            # clean up
+            docker-compose down
+            docker system prune -a -f
+            docker volume prune -f
+
+            #pull change
+            git fetch origin main
+            git reset --hard origin/main
+
+            #compose
+            docker-compose build --no-cache
+            docker-compose up -d

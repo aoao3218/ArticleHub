@@ -1,0 +1,57 @@
+name: Deploy to EC2
+on: [push]
+jobs:
+  #   build:
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - uses: actions/checkout@v3
+  #       - name: Use Node.js
+  #         uses: actions/setup-node@v3
+  #         with:
+  #           node-version: '18.x'
+  #           script: |
+  #             cd /server
+  #             npm ci
+  #             npm run build --if-present
+  #             npm test
+  #   - run: npm ci
+  #   - run: npm run build --if-present
+  #   - run: npm test
+
+  deploy:
+    # needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Add .env file
+        run: echo "KEY=VALUE" > .env
+      - name: deploy to ec2
+        uses: appleboy/ssh-action@master
+        with:
+          host: '${{ secrets.HOST_DNS }}'
+          username: '${{ secrets.EC2_USERNAME }}'
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/ArticleHub
+            git switch main
+
+            # echo "MONGODB=${{ secrets.MONGODB }}" > /home/ubuntu/ArticleHub/server/.env
+            # echo "JWT_KEY=${{ secrets.JWT_KEY }}" >> /home/ubuntu/ArticleHub/server/.env
+            # echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}" >> /home/ubuntu/ArticleHub/server/.env
+            # echo "CRT=${{ secrets.CRT }}" >> /home/ubuntu/ArticleHub//server.env
+            # echo "CLIENT_HTML=${{ secrets.CLIENT_HTML }}" >> /home/ubuntu/ArticleHub/server.env
+
+            # clean up
+            docker compose down
+            docker system prune -a -f
+            docker volume prune -f
+
+            #pull change
+            git fetch origin main
+            git reset --hard origin/main
+
+            #compose
+            docker compose build --no-cache
+            docker compose up -d

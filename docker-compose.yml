@@ -5,9 +5,14 @@ services:
 
   app:
     build: .
+    # image: node:18
     ports:
       - 443:3000
     depends_on:
       - redis
     environment:
       - REDIS_HOST=redis
+    # volumes:
+    #   - .:/usr/app
+    # working_dir: /usr/app/client/
+    # command: sh -c "npm install && npm run build && cd ../server && npm install && npm run build && node dist/index.js"

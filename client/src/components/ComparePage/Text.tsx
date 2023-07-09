@@ -58,9 +58,7 @@ const Text = ({ branch, update }: Branch) => {
 
   return (
     <div style={{ width: '100%', borderRight: '1px solid #ececec' }}>
-      <p style={{ textAlign: 'center', borderBottom: '1px solid #ececec', paddingBottom: '16px', margin: 'auto' }}>
-        {branch}
-      </p>
+      <p style={{ textAlign: 'center', borderBottom: '1px solid #ececec', padding: '8px', margin: 'auto' }}>{branch}</p>
       <div style={{ margin: '0 24px' }}>
         <input id="title" type="text" value={title} readOnly />
         <div ref={editorRef} className="editable" contentEditable="false" />

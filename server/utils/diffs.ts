@@ -67,9 +67,9 @@ function differentText(main: string, branch: string) {
   let diffText = '';
   for (const [op, data] of diffs) {
     if (op === DIFF_DELETE) {
-      diffText += `[-${data}-]`;
+      diffText += `<span style="color: rgb(195, 34, 34);">${data}</span>`;
     } else if (op === DIFF_INSERT) {
-      diffText += `[+${data}+]`;
+      diffText += `<span style="color: rgb(22, 159, 54);">${data}</span>`;
     } else if (op === DIFF_EQUAL) {
       diffText += data;
     }

@@ -91,7 +91,7 @@ const Project = () => {
               to={`/compare/mergeRequest/${projectId}-${project.name}/${currentBranch}`}
               style={{ color: '#ffff', margin: 'auto' }}
             >
-              <button style={{ marginLeft: '12px' }}>merge to main</button>
+              <button style={{ marginLeft: '12px' }}>approve to main</button>
             </Link>
           )}
           <button

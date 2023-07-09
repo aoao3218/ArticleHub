@@ -329,7 +329,35 @@ const Edit = () => {
               <p style={{ margin: '0 4px' }}>{branch}</p>
             </div>
             {articleId && (
-              <div>
+              <div className="row">
+                {compare && (
+                  <div className="row" style={{ marginRight: '20px', color: 'rgb(22, 159, 54)' }}>
+                    <div className="row">
+                      <div
+                        style={{
+                          backgroundColor: 'rgb(22, 159, 54)',
+                          width: '8px',
+                          height: '10px',
+                          margin: 'auto',
+                          marginRight: '4px',
+                        }}
+                      ></div>
+                      add
+                    </div>
+                    <div className="row" style={{ marginLeft: '12px', color: 'rgb(195, 34, 34)' }}>
+                      <div
+                        style={{
+                          backgroundColor: 'rgb(195, 34, 34)',
+                          width: '8px',
+                          height: '10px',
+                          margin: 'auto',
+                          marginRight: '4px',
+                        }}
+                      ></div>
+                      delete
+                    </div>
+                  </div>
+                )}
                 version:
                 <select
                   name="version"

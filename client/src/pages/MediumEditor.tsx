@@ -133,17 +133,18 @@ const Edit = () => {
   useEffect(() => {
     const editor = new MediumEditor(editorRef.current!, {
       placeholder: false,
-      toolbar: {
-        buttons: ['bold', 'italic', 'underline', 'anchor'],
-      },
-      anchor: {
-        customClassOption: undefined,
-        customClassOptionText: 'Button',
-        linkValidation: false,
-        placeholderText: 'Paste or type a link',
-        targetCheckbox: false,
-        targetCheckboxText: 'Open in new window',
-      },
+      // toolbar: {
+      //   buttons: ['bold', 'italic', 'underline', 'anchor'],
+      // },
+      toolbar: false,
+      // anchor: {
+      //   customClassOption: undefined,
+      //   customClassOptionText: 'Button',
+      //   linkValidation: false,
+      //   placeholderText: 'Paste or type a link',
+      //   targetCheckbox: false,
+      //   targetCheckboxText: 'Open in new window',
+      // },
     } as CoreOptions);
 
     if (articleId) {

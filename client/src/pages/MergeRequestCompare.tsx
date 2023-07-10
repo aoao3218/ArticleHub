@@ -85,7 +85,7 @@ const MergeRequestCompare = () => {
                 update
               </button>
             )}
-            <button onClick={mergeRequest}>merge request</button>
+            <button onClick={mergeRequest}>approve request</button>
           </div>
         </div>
       </div>

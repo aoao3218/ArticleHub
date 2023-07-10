@@ -11,5 +11,6 @@ const articleSchema = new Schema({
   history: [Array],
   previous_index: Number,
 });
+articleSchema.index({ article_id: 1 });
 
 export default mongoose.model('articles', articleSchema);

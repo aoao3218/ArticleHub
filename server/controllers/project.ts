@@ -7,8 +7,8 @@ export async function createProject(req: Request, res: Response) {
   try {
     const { name } = req.body;
     if (!name) throw new ValidationError('Should have Project Name');
-    const validRegex = /^[A-Za-z0-9_]+$/;
-    if (!validRegex.test(name)) throw new ValidationError('Should not have Special characters');
+    const validRegex = /[?\\/]/g;
+    if (validRegex.test(name)) throw new ValidationError('Should not have Special characters');
     const teamId = req.params.teamId;
     const userId = res.locals?.userId ?? false;
     if (!userId) throw new ValidationError('No userId');

@@ -27,7 +27,7 @@ router.route('/article/publish/:projectId').get(authenticate, getProjectPublish)
 
 router.route('/article/publish/:projectId/:articleId').post(authenticate, publishArticle);
 
-router.route('/article/compare/:branch/:articleId/:version').get(authenticate, compareArticle);
+router.route('/article/compare/:branch/:articleId/:version').get(compareArticle);
 
 router.route('/article/all/:projectId/:branch').get(authenticate, getAllArticle);
 

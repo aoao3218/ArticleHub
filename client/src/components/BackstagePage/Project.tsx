@@ -91,7 +91,7 @@ const Project = () => {
               to={`/compare/mergeRequest/${projectId}-${project.name}/${currentBranch}`}
               style={{ color: '#ffff', margin: 'auto' }}
             >
-              <button style={{ marginLeft: '12px' }}>update to main</button>
+              <button style={{ marginLeft: '12px' }}>combine to main</button>
             </Link>
           )}
           <button
@@ -106,7 +106,7 @@ const Project = () => {
             to={`/article/${teamId}-${team.name}/${projectId}-${project.name}/${currentBranch}`}
             style={{ color: '#ffff', margin: 'auto' }}
           >
-            <button style={{ marginLeft: '12px' }}>new Draft</button>
+            <button style={{ marginLeft: '12px' }}>+ new draft</button>
           </Link>
         </div>
       </div>

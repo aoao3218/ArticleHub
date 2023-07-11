@@ -33,7 +33,7 @@ const Branch = ({ project }: BranchProps) => {
                 <div>
                   {branch.merge_request && (
                     <Link to={`/compare/merge/${teamId}/${project._id}-${project.name}/${branch.name}`}>
-                      <button className="btn_third">approval request</button>
+                      <button className="btn_third">combine request</button>
                     </Link>
                   )}
                   <button style={{ marginLeft: '16px' }} className="btn_third">

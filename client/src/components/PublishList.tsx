@@ -39,7 +39,7 @@ const PublishList = () => {
     <div style={{ display: 'flex', flexDirection: 'column', width: '800px', margin: 'auto', padding: '0 24px' }}>
       {publish.map((obj) => (
         <div className="publishList">
-          <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{obj.title}</div>
+          <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>{obj.title}</div>
           <div
             style={{ maxHeight: '72px', overflow: 'inherit' }}
             dangerouslySetInnerHTML={{ __html: firstParagraph(obj.story) }}

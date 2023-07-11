@@ -172,6 +172,8 @@ const Edit = () => {
               const select = document.querySelector('select');
               select && (select.disabled = true);
               editorRef.current.setAttribute('contentEditable', 'false');
+              const compareBtn = document.querySelector('#compareBtn');
+              (compareBtn as HTMLButtonElement).removeAttribute('disabled');
             }
           })
           .catch((err) => console.log(err));
@@ -200,6 +202,8 @@ const Edit = () => {
               btn.forEach((button) => {
                 (button as HTMLButtonElement).disabled = true;
               });
+              const compareBtn = document.querySelector('#compareBtn');
+              (compareBtn as HTMLButtonElement).removeAttribute('disabled');
               editorRef.current.setAttribute('contentEditable', 'false');
             }
           })
@@ -235,6 +239,8 @@ const Edit = () => {
               (button as HTMLButtonElement).disabled = true;
             });
             editorRef.current.setAttribute('contentEditable', 'false');
+            const compareBtn = document.querySelector('#compareBtn');
+            (compareBtn as HTMLButtonElement).removeAttribute('disabled');
           }
           return;
         })
@@ -264,6 +270,8 @@ const Edit = () => {
               (button as HTMLButtonElement).disabled = true;
             });
             editorRef.current.setAttribute('contentEditable', 'false');
+            const compareBtn = document.querySelector('#compareBtn');
+            (compareBtn as HTMLButtonElement).removeAttribute('disabled');
           }
           return;
         })
@@ -302,7 +310,7 @@ const Edit = () => {
             <img src="/Users.svg" alt="visitors" style={{ width: '20px', marginRight: '4px' }} />
             <p style={{ margin: 'auto', marginRight: '12px', fontSize: '14px' }}>{visitor}</p>
             {branch !== 'main' && (
-              <button style={{ marginRight: '10px' }} onClick={handleCompare} className="btn_second">
+              <button id="compareBtn" style={{ marginRight: '10px' }} onClick={handleCompare} className="btn_second">
                 compare with main
               </button>
             )}

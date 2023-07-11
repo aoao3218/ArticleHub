@@ -32,8 +32,8 @@ export async function createBranch(req: Request, res: Response) {
     const projectId = req.params.projectId;
     const { name } = req.body;
     if (!name) throw new ValidationError('Should have Branch Name');
-    const validRegex = /^[A-Za-z0-9_]+$/;
-    if (!validRegex.test(name)) throw new ValidationError('Should not have Special characters');
+    const validRegex = /[?\\/]/g;
+    if (validRegex.test(name)) throw new ValidationError('Should not have Special characters');
     const userId = res.locals?.userId;
     const project: Project | null = await projects.findById(projectId).populate('team_id');
     const isOwner = userId === project?.team_id?.owner.toString();

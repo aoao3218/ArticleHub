@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import CreateProject from '../CreateProject';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { TeamCtx } from '../../context/TeamCtx';
 import { ProjectCtx } from '../../context/ProjectCtx';
 import InviteMember from '../InviteMember';
@@ -14,6 +14,7 @@ const Navbar = () => {
   const [invite, setInvite] = useState(false);
   const jwt = localStorage.getItem('jwt');
   const [tab, setTab] = useState(projectId);
+  const navigate = useNavigate();
   const domain = window.location.host;
   const protocol = window.location.protocol;
 
@@ -25,7 +26,12 @@ const Navbar = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         setProjects(data);
+        if (data.length > 0) {
+          setTab(data[0]._id);
+          navigate(`/team/${teamId}/${data[0]._id}`);
+        }
       })
       .catch((err) => console.log(err));
   }, [teamId]);

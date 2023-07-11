@@ -26,7 +26,10 @@ const ArticleList = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         setArticles(data);
+        setArticleId(data[0].article_id);
+        setTab(data[0].article_id);
       })
       .catch((err) => console.log(err));
   }, [projectId, branch]);

@@ -1,4 +1,5 @@
 import Text from './Text';
+import TextMain from './TextMain';
 import { useParams } from 'react-router-dom';
 
 interface props {
@@ -10,7 +11,7 @@ const CompareContent = ({ update }: props) => {
   return (
     <div className="row" style={{ width: '100%' }}>
       <Text branch={branch} update={update} />
-      <Text branch={'main'} update={update} />
+      <TextMain branch={branch} update={update} />
     </div>
   );
 };

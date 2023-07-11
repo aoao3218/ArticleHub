@@ -35,6 +35,7 @@ const MergeRequestCompare = () => {
           return;
         }
         navigate(-1);
+        toast.success('approve request');
       })
       .catch((err) => console.log(err));
   };
@@ -79,7 +80,34 @@ const MergeRequestCompare = () => {
               <p style={{ margin: '0 8px', padding: '0 8px', backgroundColor: '#ececec', borderRadius: '4px' }}>main</p>
             </div>
           </div>
-          <div style={{ margin: 'auto 0' }}>
+
+          <div className="row" style={{ margin: 'auto 0' }}>
+            <div className="row" style={{ marginRight: '20px', color: 'rgb(22, 159, 54)' }}>
+              <div className="row" style={{ margin: 'auto 0' }}>
+                <div
+                  style={{
+                    backgroundColor: 'rgb(22, 159, 54)',
+                    width: '8px',
+                    height: '10px',
+                    margin: 'auto',
+                    marginRight: '4px',
+                  }}
+                ></div>
+                add
+              </div>
+              <div className="row" style={{ margin: 'auto 0', marginLeft: '12px', color: 'rgb(195, 34, 34)' }}>
+                <div
+                  style={{
+                    backgroundColor: 'rgb(195, 34, 34)',
+                    width: '8px',
+                    height: '10px',
+                    margin: 'auto',
+                    marginRight: '4px',
+                  }}
+                ></div>
+                delete
+              </div>
+            </div>
             {update && (
               <button style={{ marginRight: '12px' }} onClick={handleUpdate}>
                 update

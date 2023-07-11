@@ -303,7 +303,7 @@ const Edit = () => {
             <p style={{ margin: 'auto', marginRight: '12px', fontSize: '14px' }}>{visitor}</p>
             {branch !== 'main' && (
               <button style={{ marginRight: '10px' }} onClick={handleCompare} className="btn_second">
-                compare
+                compare with main
               </button>
             )}
             {articleId && branch == 'main' && (

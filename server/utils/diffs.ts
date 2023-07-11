@@ -27,30 +27,23 @@ export async function getPatches(articleId: string, branch: string, story: strin
 }
 
 export async function getStory(articleId: string, branch: string, number: string | undefined) {
-  console.time('DB');
   const article = await articles.findOne({ article_id: articleId, branch });
-  console.timeEnd('DB');
   const version = Number.isNaN(parseInt(number as string, 10))
     ? article?.history.length || 0
     : parseInt(number as string, 10);
   if (article) {
-    console.time('article');
     const title = article.title;
     const historySlice = article.history.slice(0, version);
     const history = historySlice.flat();
     const story = dmp.patch_apply(history as patch_obj[], article?.story as string)[0];
-    console.timeEnd('article');
     return { title, story, version: article.history.length };
   } else {
-    console.time('db2');
     const articleMain = await articles.findOne({ article_id: articleId, branch: 'main' });
     const articleBranch = await versions.findOne({ article_id: articleId, branch });
-    console.timeEnd('db2');
     const title = articleMain?.title;
     if (!articleMain) {
       return { title: '', story: '', version: '' };
     }
-    console.time('branch');
     if (!articleBranch) {
       const story = dmp.patch_apply(articleMain?.history.flat() as patch_obj[], articleMain?.story as string)[0];
       return { title, story, version: articleMain?.history.length, noUpdate: true };
@@ -63,7 +56,6 @@ export async function getStory(articleId: string, branch: string, number: string
     const branchHistory = articleBranch?.history.slice(0, branchVersion);
     const history = [...(mainHistory?.flat() as patch_obj[]), ...(branchHistory.flat() as patch_obj[])];
     const story = dmp.patch_apply(history as patch_obj[], articleMain?.story as string)[0];
-    console.timeEnd('branch');
     return { title, story, version: articleBranch?.history.length };
   }
 }
@@ -75,9 +67,9 @@ function differentText(main: string, branch: string) {
   let diffText = '';
   for (const [op, data] of diffs) {
     if (op === DIFF_DELETE) {
-      diffText += `<del style='color:red'><span style="color: rgb(195, 34, 34);">${data}</span></del>`;
+      diffText += `<s style='color: rgb(195, 34, 34)'>${data}</s>`;
     } else if (op === DIFF_INSERT) {
-      diffText += `<span style="color: rgb(22, 159, 54);">${data}</span>`;
+      diffText += `<s style="color: rgb(22, 159, 54); text-decoration: none;">${data}</s>`;
     } else if (op === DIFF_EQUAL) {
       diffText += data;
     }
@@ -104,17 +96,16 @@ export async function getCompare(articleId: string, branch: string, version: str
       },
     },
   ]);
-  const versionNumber = Number(version);
   const title = article.title;
   const branchHistory = article.versions[0]?.history;
   if (!branchHistory) {
-    const story = dmp.patch_apply(
-      article.history.slice(0, versionNumber).flat() as patch_obj[],
-      article.story as string
-    )[0];
+    const story = dmp.patch_apply(article.history.flat() as patch_obj[], article.story as string)[0];
     const diffText = await differentText('', story);
     return { title, story: diffText };
   }
+  const versionNumber = Number.isNaN(parseInt(version as string, 10))
+    ? article.versions[0].history.length
+    : parseInt(version as string, 10);
   const mainStory = dmp.patch_apply(article.history.flat() as patch_obj[], article.story as string)[0];
   const previousIndex = article.versions[0].previous_index;
   const mainHistory = article.history.slice(0, previousIndex) as patch_obj[];

@@ -12,7 +12,9 @@ const SignUP = () => {
   const domain = window.location.host;
   const protocol = window.location.protocol;
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+    console.log(userName, userEmail, userPassword);
     fetch(`${protocol}//${domain}/api/user/signup`, {
       method: 'POST',
       headers: {
@@ -39,19 +41,18 @@ const SignUP = () => {
   };
   return (
     <div className="column">
-      <h4>Join Medium.</h4>
-      {/* {message && <MessagePOP msg={mgs} onClose={() => setMessage(false)} />} */}
-      <div className="form">
+      <h4>Join ArticleHub.</h4>
+      <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="name">Name</label>
-        <input type="text" id="name" onChange={(e) => setUserName(e.target.value)} />
+        <input type="text" name="name" onChange={(e) => setUserName(e.target.value)} />
         <label htmlFor="email">Email</label>
-        <input type="email" id="email" onChange={(e) => setUserEmail(e.target.value)} />
+        <input type="email" name="email" onChange={(e) => setUserEmail(e.target.value)} />
         <label htmlFor="password">PassWord</label>
-        <input type="password" id="password" onChange={(e) => setUserPassword(e.target.value)} />
-        <button id="signUpBtn" onClick={handleSubmit} style={{ margin: '20px 0px' }}>
+        <input type="password" name="password" onChange={(e) => setUserPassword(e.target.value)} />
+        <button type="submit" style={{ margin: '20px 0px' }}>
           註冊
         </button>
-      </div>
+      </form>
     </div>
   );
 };

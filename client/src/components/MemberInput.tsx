@@ -37,7 +37,7 @@ const MemberInput = () => {
           )}
         </div>
       ))}
-      <p onClick={handleAddEmail} style={{ textAlign: 'center' }}>
+      <p onClick={handleAddEmail} style={{ textAlign: 'center', cursor: 'pointer' }}>
         Add Member
       </p>
     </div>

@@ -7,11 +7,15 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
+import { useErrorBoundary } from 'react-error-boundary';
+import { ErrorBoundary } from 'react-error-boundary';
+import NotFounds from './NotFounds';
 
 const Edit = () => {
   const [socket] = useState(() => {
     return io();
   });
+  const { showBoundary } = useErrorBoundary();
   const jwt = localStorage.getItem('jwt');
   const domain = window.location.host;
   const protocol = window.location.protocol;
@@ -150,7 +154,12 @@ const Edit = () => {
     if (articleId) {
       if (!jwt) {
         fetch(url)
-          .then((res) => res.json())
+          .then((res) => {
+            if (res.status !== 200) {
+              showBoundary(res);
+            }
+            return res.json();
+          })
           .then((data) => {
             console.log(data);
             setTitle(data.title);
@@ -183,7 +192,12 @@ const Edit = () => {
             Authorization: `Bearer ${jwt}`,
           }),
         })
-          .then((res) => res.json())
+          .then((res) => {
+            if (res.status !== 200) {
+              showBoundary(res);
+            }
+            return res.json();
+          })
           .then((data) => {
             console.log(data);
             setTitle(data.title);
@@ -281,140 +295,155 @@ const Edit = () => {
 
   useEffect(() => {
     socket.emit('join', { projectId: id, articleId, branch });
+    socket.on('visitors', ({ visitors }) => setVisitor(visitors));
+    socket.on('leave', ({ visitors }) => setVisitor(visitors));
+    return () => {
+      socket.off('visitors', ({ visitors }) => setVisitor(visitors));
+      socket.off('leave', ({ visitors }) => setVisitor(visitors));
+    };
   }, []);
-
-  socket.on('visitors', ({ visitors }) => setVisitor(visitors));
-  socket.on('leave', ({ visitors }) => setVisitor(visitors));
 
   const back = () => {
     socket.emit('disconnect');
   };
 
   return (
-    <div style={{ backgroundColor: '#FAFAFA', height: '100%' }}>
-      <div className="head">
-        <div className="content" style={{ position: 'relative' }}>
-          {jwt ? (
-            <Link to={`/team/${teamId}/${id}`} style={{ margin: 'auto 0' }} onClick={back}>
-              <div className="row">
-                <span style={{ margin: 'auto 8px' }}>&lt;</span>
-                <h5 style={{ margin: 'auto 0' }}>Back</h5>
-              </div>
-            </Link>
-          ) : (
-            <h3 style={{ margin: 'auto 0' }}>
-              <Link to={'/'}>ArticleHub</Link>
-            </h3>
-          )}
-          <div style={{ margin: 'auto 0', display: 'flex', flexDirection: 'row' }}>
-            <img src="/Users.svg" alt="visitors" style={{ width: '20px', marginRight: '4px' }} />
-            <p style={{ margin: 'auto', marginRight: '12px', fontSize: '14px' }}>{visitor}</p>
-            {branch !== 'main' && (
-              <button id="compareBtn" style={{ marginRight: '10px' }} onClick={handleCompare} className="btn_second">
-                compare with main
-              </button>
+    <ErrorBoundary FallbackComponent={NotFounds}>
+      <div style={{ backgroundColor: '#FAFAFA', height: '100%' }}>
+        <div className="head">
+          <div className="content" style={{ position: 'relative' }}>
+            {jwt ? (
+              <Link to={`/team/${teamId}/${id}`} style={{ margin: 'auto 0' }} onClick={back}>
+                <div className="row">
+                  <span style={{ margin: 'auto 8px' }}>&lt;</span>
+                  <h5 style={{ margin: 'auto 0' }}>Back</h5>
+                </div>
+              </Link>
+            ) : (
+              <h3 style={{ margin: 'auto 0' }}>
+                <Link to={'/'}>ArticleHub</Link>
+              </h3>
             )}
-            {articleId && branch == 'main' && (
-              <button style={{ marginRight: '10px' }} onClick={handlePublish} className="btn_second">
-                publish
-              </button>
-            )}
-            {articleId && (
-              <button onClick={copyLink} style={{ marginRight: '10px' }} className="btn_second">
-                Share
-              </button>
-            )}
-            <button onClick={handleSave}>Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div className="edit">
-        <div style={{ width: '800px', margin: '0 auto' }}>
-          <div className="row" style={{ justifyContent: 'space-between', marginTop: '16px' }}>
-            <div className="row">
-              <p style={{ margin: '0 4px' }}>{teamName}</p>&gt;<p style={{ margin: '0 4px' }}>{name}</p>
-              &gt;
-              <p style={{ margin: '0 4px' }}>{branch}</p>
+            <div style={{ margin: 'auto 0', display: 'flex', flexDirection: 'row' }}>
+              <img src="/Users.svg" alt="visitors" style={{ width: '20px', marginRight: '4px' }} />
+              <p style={{ margin: 'auto', marginRight: '12px', fontSize: '14px' }}>{visitor}</p>
+              {branch !== 'main' && (
+                <button id="compareBtn" style={{ marginRight: '10px' }} onClick={handleCompare} className="btn_second">
+                  compare with main
+                </button>
+              )}
+              {articleId && branch == 'main' && (
+                <button style={{ marginRight: '10px' }} onClick={handlePublish} className="btn_second">
+                  publish
+                </button>
+              )}
+              {articleId && (
+                <button onClick={copyLink} style={{ marginRight: '10px' }} className="btn_second">
+                  Share
+                </button>
+              )}
+              <button onClick={handleSave}>Save</button>
             </div>
-            {articleId && (
-              <div className="row">
-                {compare && (
-                  <div className="row" style={{ marginRight: '20px', color: 'rgb(22, 159, 54)' }}>
-                    <div className="row">
-                      <div
-                        style={{
-                          backgroundColor: 'rgb(22, 159, 54)',
-                          width: '8px',
-                          height: '10px',
-                          margin: 'auto',
-                          marginRight: '4px',
-                        }}
-                      ></div>
-                      add
-                    </div>
-                    <div className="row" style={{ marginLeft: '12px', color: 'rgb(195, 34, 34)' }}>
-                      <div
-                        style={{
-                          backgroundColor: 'rgb(195, 34, 34)',
-                          width: '8px',
-                          height: '10px',
-                          margin: 'auto',
-                          marginRight: '4px',
-                        }}
-                      ></div>
-                      delete
-                    </div>
-                  </div>
-                )}
-                version:
-                <select
-                  name="version"
-                  value={currentVersion}
-                  onChange={(e) => setCurrentVersion(Number(e.target.value))}
-                  style={{ padding: '2px 12px', marginLeft: '12px' }}
-                >
-                  {branchUpdateYet && <option>1</option>}
-                  {!branchUpdateYet && Array.from({ length: version }, (_, i) => <option key={i + 1}>{i + 1}</option>)}
-                </select>
-              </div>
-            )}
           </div>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Article Name Here"
-            style={{ whiteSpace: 'pre-wrap' }}
-            required
-          />
-          <div
-            className="row"
-            style={{ width: '100%', minHeight: 'calc(100vh - 200px)', backgroundColor: '#FAFAFA', margin: '0 auto' }}
-          >
-            <div ref={editorRef} className="editable" />
-            {compare && (
-              <div style={{ width: '100%', position: 'relative', marginLeft: '20px' }}>
-                <span
-                  style={{ position: 'absolute', top: '2px', right: '10px', cursor: 'pointer' }}
-                  onClick={() => {
-                    setCompare(false);
-                  }}
-                >
-                  &times;
-                </span>
-                <div
-                  ref={compareRef}
-                  className="editable"
-                  style={{ border: '1px solid #ececec', borderRadius: '4px' }}
-                />
+        </div>
+
+        <div className="edit">
+          <div style={{ width: '800px', margin: '0 auto' }}>
+            <div className="row" style={{ justifyContent: 'space-between', marginTop: '16px' }}>
+              <div className="row">
+                <p className="text-hidden" style={{ margin: '0 4px', maxWidth: '100px' }}>
+                  {teamName}
+                </p>
+                &gt;
+                <p className="text-hidden" style={{ margin: '0 4px', maxWidth: '100px' }}>
+                  {name}
+                </p>
+                &gt;
+                <p className="text-hidden" style={{ margin: '0 4px', maxWidth: '100px' }}>
+                  {branch}
+                </p>
               </div>
-            )}
+              {articleId && (
+                <div className="row">
+                  {compare && (
+                    <div className="row" style={{ marginRight: '20px', color: 'rgb(22, 159, 54)' }}>
+                      <div className="row">
+                        <div
+                          style={{
+                            backgroundColor: 'rgb(22, 159, 54)',
+                            width: '8px',
+                            height: '10px',
+                            margin: 'auto',
+                            marginRight: '4px',
+                          }}
+                        ></div>
+                        add
+                      </div>
+                      <div className="row" style={{ marginLeft: '12px', color: 'rgb(195, 34, 34)' }}>
+                        <div
+                          style={{
+                            backgroundColor: 'rgb(195, 34, 34)',
+                            width: '8px',
+                            height: '10px',
+                            margin: 'auto',
+                            marginRight: '4px',
+                          }}
+                        ></div>
+                        delete
+                      </div>
+                    </div>
+                  )}
+                  version:
+                  <select
+                    name="version"
+                    value={currentVersion}
+                    onChange={(e) => setCurrentVersion(Number(e.target.value))}
+                    style={{ padding: '2px 12px', marginLeft: '12px' }}
+                  >
+                    {branchUpdateYet && <option>1</option>}
+                    {!branchUpdateYet &&
+                      Array.from({ length: version }, (_, i) => <option key={i + 1}>{i + 1}</option>)}
+                  </select>
+                </div>
+              )}
+            </div>
+            <input
+              id="title"
+              type="text"
+              value={title}
+              maxLength={100}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Article Name Here"
+              style={{ whiteSpace: 'pre-wrap' }}
+              required
+            />
+            <div
+              className="row"
+              style={{ width: '100%', minHeight: 'calc(100vh - 200px)', backgroundColor: '#FAFAFA', margin: '0 auto' }}
+            >
+              <div ref={editorRef} className="editable" />
+              {compare && (
+                <div style={{ width: '100%', position: 'relative', marginLeft: '20px' }}>
+                  <span
+                    style={{ position: 'absolute', top: '2px', right: '10px', cursor: 'pointer' }}
+                    onClick={() => {
+                      setCompare(false);
+                    }}
+                  >
+                    &times;
+                  </span>
+                  <div
+                    ref={compareRef}
+                    className="editable"
+                    style={{ border: '1px solid #ececec', borderRadius: '4px' }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 

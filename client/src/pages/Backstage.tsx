@@ -4,6 +4,8 @@ import { ProjectCtxProvider } from '../context/ProjectCtx';
 import { TeamCtx } from '../context/TeamCtx';
 import Navbar from '../components/BackstagePage/Navbar';
 import Header from '../components/Header';
+import { ErrorBoundary } from 'react-error-boundary';
+import NotFounds from './NotFounds';
 
 const Backstage = () => {
   const { setTeams } = useContext(TeamCtx);
@@ -25,15 +27,17 @@ const Backstage = () => {
   }, []);
 
   return (
-    <div>
-      <Header />
-      <div className="row">
-        <ProjectCtxProvider>
-          <Navbar />
-          <Outlet />
-        </ProjectCtxProvider>
+    <ErrorBoundary FallbackComponent={NotFounds}>
+      <div>
+        <Header />
+        <div className="row">
+          <ProjectCtxProvider>
+            <Navbar />
+            <Outlet />
+          </ProjectCtxProvider>
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 

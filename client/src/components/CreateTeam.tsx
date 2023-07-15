@@ -55,13 +55,13 @@ const CreateTeam: React.FC<CreateTeamProps> = ({ onClose, create }) => {
         <span className="close" onClick={onClose}>
           &times;
         </span>
-        <p style={{ fontSize: '20px', fontWeight: 'bold', margin: '0px auto 24px auto', alignContent: 'center' }}>
+        <p style={{ fontSize: '20px', fontWeight: 'bold', margin: '0px auto 16px auto', alignContent: 'center' }}>
           Create Team
         </p>
         {message && <FailedMessage mgs={mgs} />}
         <input
           type="text"
-          pattern="[^/\\?]*"
+          maxLength={40}
           value={Name}
           onChange={handleTeamNameChange}
           placeholder="Team Name"

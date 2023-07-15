@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { getAllPublish, getArticleView } from '../controllers/article.js';
+import { getAllPublish, getPublishArticle } from '../controllers/article.js';
 
 const router = Router();
 
 router.route('/publish').get(getAllPublish);
 
-router.route('/view/:url').get(getArticleView);
+router.route('/publish/:articleId').get(getPublishArticle);
 
 export default router;

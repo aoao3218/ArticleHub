@@ -53,11 +53,18 @@ const CreateBranch: React.FC<CreateProps> = ({ projectId, onClose, create }) => 
         <span className="close" onClick={onClose}>
           &times;
         </span>
-        <p style={{ fontSize: '20px', fontWeight: 'bold', margin: '0px auto 24px auto', alignContent: 'center' }}>
+        <p style={{ fontSize: '20px', fontWeight: 'bold', margin: '0px auto 16px auto', alignContent: 'center' }}>
           Create Branch
         </p>
         {message && <FailedMessage mgs={mgs} />}
-        <input type="text" pattern="^[^/?]*$" value={Name} onChange={handleNameChange} placeholder="Branch Name" />
+        <input
+          type="text"
+          maxLength={15}
+          pattern="^[^/?]*$"
+          value={Name}
+          onChange={handleNameChange}
+          placeholder="Branch Name"
+        />
         <button onClick={handleCreate}>Create</button>
       </div>
     </div>

@@ -7,6 +7,7 @@ import CreateBranch from '../CreateBranch';
 import Article from './Article';
 import Branch from './Branch';
 import Publish from './Publish';
+import { useErrorBoundary } from 'react-error-boundary';
 
 interface Article {
   article_id: string;
@@ -14,6 +15,7 @@ interface Article {
 }
 
 const Project = () => {
+  const { showBoundary } = useErrorBoundary();
   const jwt = localStorage.getItem('jwt');
   const { projectId } = useParams();
   const { teamId } = useParams();
@@ -26,7 +28,6 @@ const Project = () => {
   const [tab, setTab] = useState<string>('article');
   const domain = window.location.host;
   const protocol = window.location.protocol;
-  console.log(currentBranch);
 
   function getArticle() {
     fetch(`${protocol}//${domain}/api/article/all/${projectId}/${currentBranch}`, {
@@ -34,7 +35,12 @@ const Project = () => {
         Authorization: `Bearer ${jwt}`,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status !== 200) {
+          showBoundary(res);
+        }
+        return res.json();
+      })
       .then((data) => {
         console.log(data);
         setArticles(data);
@@ -68,11 +74,11 @@ const Project = () => {
     return <div>no projects</div>;
   }
   return (
-    <div className="content" style={{ width: '100%', margin: 'auto', backgroundColor: '#FAFAFA' }}>
+    <div className="content" style={{ width: '100%', margin: 'auto', backgroundColor: '#FAFAFA', overflowY: 'scroll' }}>
       {openBranch && <CreateBranch onClose={closeCreateBranch} create={createBranch} projectId={projectId} />}
       <div className="row btw" style={{ marginBottom: '32px' }}>
         <div className="row" style={{ margin: '32px 0' }}>
-          <h2>{project.name}</h2>
+          <h2 style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{project.name}</h2>
           <span style={{ margin: 'auto 8px' }}>&gt;</span>
           <select name="branch" value={currentBranch} onChange={(e) => setCurrentBranch(e.target.value)}>
             <option key="main" value={'main'}>
@@ -111,16 +117,28 @@ const Project = () => {
         </div>
       </div>
       <div className="tabs" style={{ textAlign: 'left' }}>
-        <span className={`tab ${tab === 'article' ? 'tabActive' : ''}`} onClick={() => setTab('article')}>
+        <span
+          className={`tab ${tab === 'article' ? 'tabActive' : ''}`}
+          style={{ cursor: 'pointer' }}
+          onClick={() => setTab('article')}
+        >
           Draft
         </span>
         {team.own && (
-          <span className={`tab ${tab === 'branch' ? 'tabActive' : ''}`} onClick={() => setTab('branch')}>
+          <span
+            className={`tab ${tab === 'branch' ? 'tabActive' : ''}`}
+            style={{ cursor: 'pointer' }}
+            onClick={() => setTab('branch')}
+          >
             Branch Control
           </span>
         )}
         {team.own && (
-          <span className={`tab ${tab === 'publish' ? 'tabActive' : ''}`} onClick={() => setTab('publish')}>
+          <span
+            className={`tab ${tab === 'publish' ? 'tabActive' : ''}`}
+            style={{ cursor: 'pointer' }}
+            onClick={() => setTab('publish')}
+          >
             Publish
           </span>
         )}

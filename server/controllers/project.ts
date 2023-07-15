@@ -46,9 +46,8 @@ export async function getProject(req: Request, res: Response) {
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
-
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
       return;
     }
     res.status(500).json({ errors: 'create Project failed' });

@@ -31,14 +31,14 @@ const Article = ({ team, articles, project, currentBranch }: ArticleProps) => {
         <tbody>
           <tr>
             {articles.map((article) => (
-              <td>
-                <Link
-                  to={`/article/${teamId}-${team}/${project._id}-${project.name}/${currentBranch}/${article.article_id}`}
-                  style={{ display: 'block', width: '100%', cursor: 'pointer' }}
-                >
-                  {article.title}
-                </Link>
-              </td>
+              <Link
+                to={`/article/${teamId}-${team}/${project._id}-${project.name}/${currentBranch}/${article.article_id}`}
+                style={{ display: 'block', width: '100%', cursor: 'pointer' }}
+              >
+                <td>
+                  <div style={{ margin: '0', overflowWrap: 'anywhere' }}>{article.title}</div>
+                </td>
+              </Link>
             ))}
           </tr>
         </tbody>

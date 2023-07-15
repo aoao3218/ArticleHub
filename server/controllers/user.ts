@@ -23,6 +23,8 @@ export async function signUp(req: Request, res: Response) {
       password: hash,
       provider: 'native',
     });
+    console.log(user);
+    if (!user) throw new ValidationError('sign up failed');
     const token = await signJWT(user._id.toString());
     res.status(200).json({ token });
   } catch (err) {

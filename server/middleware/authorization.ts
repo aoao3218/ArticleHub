@@ -14,7 +14,7 @@ export const authorization = (roleNames: string[]) => async (req: Request, res: 
       return;
     }
     const checkMemberRole = team?.member.some(
-      (member) => member.id && member.id.toString() === userId && roleNames.includes(member.role)
+      (member) => member._id && member._id.toString() === userId && roleNames.includes(member.role)
     );
     if (checkMemberRole) {
       next();

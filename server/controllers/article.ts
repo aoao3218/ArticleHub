@@ -93,7 +93,7 @@ export async function getAllArticle(req: Request, res: Response) {
       return;
     }
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
       return;
     }
     res.status(500).json({ errors: 'get Article failed' });
@@ -115,34 +115,22 @@ export async function getArticle(req: Request, res: Response) {
       return;
     }
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
       return;
     }
     res.status(500).json({ errors: 'get Article failed' });
   }
 }
 
-export async function getArticleView(req: Request, res: Response) {
+export async function getPublishArticle(req: Request, res: Response) {
   try {
-    const { url } = req.params;
-    // const data = CryptoJS.AES.decrypt(url, secretKey);
-    // const dataString = data.toString(CryptoJS.enc.Utf8);
-    // const dataObject = JSON.parse(dataString);
-    // const { articleId, branch, number } = dataObject;
-    // const result = await getStory(articleId, branch, number);
-    const data = atob(url);
-    const dataObject = JSON.parse(data);
-    const { team, project, articleId, branch } = dataObject;
-    const result = `/article/${team}/${project}/${branch}/${articleId}`;
-    res.status(200).redirect(result);
+    const { articleId } = req.params;
+    const result = await publishes.findOne({ article_id: articleId });
+    res.status(200).json(result);
   } catch (err) {
     console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
       return;
     }
     res.status(500).json({ errors: 'get Article failed' });
@@ -237,25 +225,5 @@ export async function getAllPublish(req: Request, res: Response) {
       return;
     }
     res.status(500).json({ errors: 'get publish failed' });
-  }
-}
-
-export async function getShortUrl(req: Request, res: Response) {
-  try {
-    const data = req.body;
-    const jsonString = JSON.stringify(data);
-    const url = btoa(jsonString);
-    res.status(200).json(url);
-  } catch (err) {
-    console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get Article failed' });
   }
 }

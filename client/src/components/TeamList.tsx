@@ -62,11 +62,9 @@ const TeamList = () => {
             <tbody>
               <tr>
                 {teams.map((team) => (
-                  <td key={team._id}>
-                    <Link to={`/team/${team._id}`} style={{ display: 'block', width: '100%', cursor: 'pointer' }}>
-                      {team.name}
-                    </Link>
-                  </td>
+                  <Link to={`/team/${team._id}`} style={{ display: 'block', width: '100%', cursor: 'pointer' }}>
+                    <td key={team._id}>{team.name}</td>
+                  </Link>
                 ))}
               </tr>
             </tbody>

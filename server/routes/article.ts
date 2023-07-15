@@ -8,7 +8,6 @@ import {
   getAllArticle,
   getProjectPublish,
   publishArticle,
-  getShortUrl,
 } from '../controllers/article.js';
 import { articleAuthorization } from '../middleware/authorization.js';
 import authenticate from '../middleware/authenticate.js';
@@ -20,8 +19,6 @@ function visitors(req: Request, res: Response, next: NextFunction) {
 }
 
 const router = Router();
-
-router.route('/article/share').post(getShortUrl);
 
 router.route('/article/publish/:projectId').get(authenticate, getProjectPublish);
 

@@ -252,6 +252,8 @@ select {
 }
 
 .nav {
+  overflow: hidden;
+  text-overflow: ellipsis;
   border: 0;
   color: #2e2e2e;
   transition: 0.1s;
@@ -276,15 +278,15 @@ select {
     transform: rotate(360deg);
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
 .card {
   padding: 2em;
 }
 
 .read-the-docs {
   color: #888;
+}
+
+.text-hidden {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }/*# sourceMappingURL=App.css.map */

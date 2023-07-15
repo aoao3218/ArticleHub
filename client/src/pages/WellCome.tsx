@@ -15,12 +15,12 @@ const WellCome = () => {
   return (
     <div className="content home" style={{ height: 'calc(100% - 61px)' }}>
       <h1 style={{ fontSize: '68px' }}>
-        How you <strong style={{ color: '#edb320' }}>control</strong> ,
+        How do you <strong style={{ color: '#edb320' }}>control</strong> ,
         <strong style={{ color: '#edb320' }}> align</strong>
-        <br /> and <strong> management</strong> articles with other people?
+        <br /> and <strong> manage</strong> articles with other people?
       </h1>
       <h1 style={{ fontSize: '68px', margin: '0 0 45px 0' }}>
-        Do it together with <span style={{ color: '#edb320' }}>ArticleHub</span>
+        Do it to gether with <span style={{ color: '#edb320' }}>ArticleHub</span>
       </h1>
       <div>
         <button className="btn_home" onClick={start}>

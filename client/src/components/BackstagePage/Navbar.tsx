@@ -4,8 +4,11 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { TeamCtx } from '../../context/TeamCtx';
 import { ProjectCtx } from '../../context/ProjectCtx';
 import InviteMember from '../InviteMember';
+import { useErrorBoundary } from 'react-error-boundary';
+import MemberList from '../MemberList';
 
 const Navbar = () => {
+  const { showBoundary } = useErrorBoundary();
   const { teamId } = useParams();
   const { teams } = useContext(TeamCtx);
   const { projectId } = useParams();
@@ -14,26 +17,33 @@ const Navbar = () => {
   const [invite, setInvite] = useState(false);
   const jwt = localStorage.getItem('jwt');
   const [tab, setTab] = useState(projectId);
+  const [member, setMember] = useState(false);
   const navigate = useNavigate();
   const domain = window.location.host;
   const protocol = window.location.protocol;
-
+  console.log(teams);
   useEffect(() => {
     fetch(`${protocol}//${domain}/api/project/${teamId}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status !== 200) {
+          showBoundary(res);
+        }
+        return res.json();
+      })
       .then((data) => {
-        console.log(data);
         setProjects(data);
         if (data.length > 0) {
           setTab(data[0]._id);
           navigate(`/team/${teamId}/${data[0]._id}`);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
   }, [teamId]);
 
   const closeProject = () => {
@@ -59,6 +69,10 @@ const Navbar = () => {
     setInvite(false);
   };
 
+  const closeMember = () => {
+    setMember(false);
+  };
+
   const inviteSuccess = () => {
     setInvite(false);
   };
@@ -72,14 +86,21 @@ const Navbar = () => {
     <div className="navbar">
       {isCreateProject && <CreateProject onClose={closeProject} create={createProject} />}
       {invite && <InviteMember onClose={closeInvite} create={inviteSuccess} teamId={teamId} />}
+      {member && <MemberList onClose={closeMember} teamId={teamId} />}
       <div>
-        <div style={{ marginTop: '20px' }}>
+        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
           <Link to={'/profile'}>
             <span style={{ marginRight: '8px' }}>&lt;</span>back to teams
           </Link>
+          <img
+            src="../Users.svg"
+            alt="members"
+            style={{ width: '20px', height: '20px', margin: 'auto 0' }}
+            onClick={() => setMember(true)}
+          />
         </div>
-        <h2 style={{ margin: '24px 0' }}>{team.name}</h2>
-        <ul>
+        <h2 style={{ margin: '24px 0', overflow: 'hidden', textOverflow: 'ellipsis' }}>{team.name}</h2>
+        <ul style={{ overflowY: 'scroll' }}>
           {projects.map((project) => (
             <Link to={`${project._id}`} key={project._id}>
               <li

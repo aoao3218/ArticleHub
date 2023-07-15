@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { ArticleCtx } from '../../context/ArticleCtx';
 import { useParams } from 'react-router-dom';
+import { useErrorBoundary } from 'react-error-boundary';
 
 interface Article {
   article_id: string;
@@ -8,6 +9,7 @@ interface Article {
 }
 
 const ArticleList = () => {
+  const { showBoundary } = useErrorBoundary();
   const jwt = localStorage.getItem('jwt');
   const { branch } = useParams();
   const { projectId } = useParams();
@@ -24,7 +26,12 @@ const ArticleList = () => {
         Authorization: `Bearer ${jwt}`,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status !== 200) {
+          showBoundary(res);
+        }
+        return res.json();
+      })
       .then((data) => {
         console.log(data);
         setArticles(data);
@@ -37,7 +44,9 @@ const ArticleList = () => {
   return (
     <div className="navbar">
       <div>
-        <h2 style={{ margin: '32px 0px' }}>{name}</h2>
+        <h2 className="text-hidden" style={{ margin: '32px 0px' }}>
+          {name}
+        </h2>
         <p>change articles</p>
         <ul>
           {articles.map((article) => (

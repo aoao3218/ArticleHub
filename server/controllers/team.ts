@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from '../utils/errorHandler.js';
 import users from '../models/user.js';
 import teams from '../models/team.js';
-
 interface Team {
   toObject(): unknown;
   _id: string;
@@ -25,7 +24,7 @@ export async function getTeam(req: Request, res: Response) {
   } catch (err) {
     console.log(err);
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
       return;
     }
     res.status(500).json({ errors: 'get Team failed' });
@@ -41,7 +40,8 @@ export async function createTeam(req: Request, res: Response) {
     const userId = res.locals?.userId;
     const owner = await users.findById(userId);
     if (!owner) throw new ValidationError('No such account');
-    const member = await users.find({ email: { $in: emails } });
+    const member = emails[0] !== '' ? await users.find({ email: { $in: emails } }) : [];
+    if (emails[0] !== '' && emails.length !== member.length) throw new ValidationError('some email is invalid');
     const result = await teams.create({
       name: name,
       owner: owner,
@@ -68,13 +68,9 @@ export async function inviteMember(req: Request, res: Response) {
     const teamId = req.params.teamId;
     const userId = res.locals?.userId ?? false;
     const member = await users.find({ email: { $in: emails } });
-    if (emails.length !== member.length) {
-      throw new ValidationError('some email is invalid');
-    }
+    if (emails.length !== member.length) throw new ValidationError('some email is invalid');
     const filter = { _id: teamId, owner: userId };
-    if (!filter) {
-      throw new ValidationError('team not found or not owner');
-    }
+    if (!filter) throw new ValidationError('team not found or not owner');
     const update = { $push: { member: { $each: member } } };
     const result = await teams.updateOne(filter, update);
     res.status(200).json(result);
@@ -84,7 +80,23 @@ export async function inviteMember(req: Request, res: Response) {
       return;
     }
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: 'invite Member failed' });
+  }
+}
+
+export async function getMember(req: Request, res: Response) {
+  try {
+    const teamId = req.params.teamId;
+    const result = await teams.findById(teamId).select('member');
+    const memberIds = result?.member.map((member) => member._id?.toString());
+    const memberEmails = await users.find({ _id: { $in: memberIds } }).select('email');
+    res.status(200).json(memberEmails);
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(400).json({ errors: err.message });
       return;
     }
     res.status(500).json({ errors: 'invite Member failed' });

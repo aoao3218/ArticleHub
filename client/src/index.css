@@ -4,6 +4,7 @@
     Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  box-sizing: border-box;
 
   color-scheme: light dark;
   color: #213547;
@@ -14,6 +15,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+input {
+  background-color: #ffffff;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
 }
 
 input:active {
@@ -137,4 +143,11 @@ table {
 
   border: #ffffff;
   margin: 24px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .input {
+    background-color: #ffffff;
+    color: #020202;
+  }
 }

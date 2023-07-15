@@ -5,6 +5,7 @@ uploads/*
 private.key
 cert.crt
 .env
+.csv*
 
 /db/dbVersion.txt
 

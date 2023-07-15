@@ -16,6 +16,7 @@ export async function saveArticle(req: Request, res: Response) {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
     const { title, story } = req.body;
+    const content = await story.replace(/<p>/g, '/n').replace(/<\/p>/g, '');
     if (!title) throw new ValidationError('title should not be empty');
     const article = await articles.findOne({ article_id: articleId });
     if (articleId == 'undefined') {
@@ -24,7 +25,7 @@ export async function saveArticle(req: Request, res: Response) {
         project_id: projectId,
         article_id: uuidv4(),
         title,
-        story,
+        story: content,
         branch,
         history: [],
         previous_index: null,
@@ -33,7 +34,7 @@ export async function saveArticle(req: Request, res: Response) {
       return;
     } else if (article?.branch == branch) {
       console.log('a save');
-      const diffs = await getPatches(articleId, branch, story);
+      const diffs = await getPatches(articleId, branch, content);
       if (diffs.length == 0) throw new ValidationError('no change');
       const filter = { article_id: articleId, branch };
       const update = { $push: { history: diffs } };
@@ -44,7 +45,7 @@ export async function saveArticle(req: Request, res: Response) {
     const version = await versions.findOne({ article_id: articleId, branch });
     if (!version) {
       console.log('v create');
-      const diffs = await getPatches(articleId, branch, story);
+      const diffs = await getPatches(articleId, branch, content);
       if (diffs.length == 0) throw new ValidationError('no change');
       const main = await articles.findOne({ article_id: articleId, branch: 'main' });
       const result = await versions.create({
@@ -58,7 +59,7 @@ export async function saveArticle(req: Request, res: Response) {
       return;
     }
     console.log('v save');
-    const diffs = await getPatches(articleId, branch, story);
+    const diffs = await getPatches(articleId, branch, content);
     if (diffs.length == 0) throw new ValidationError('no change');
     const filter = { article_id: articleId, branch };
     const update = { $push: { history: diffs } };
@@ -107,7 +108,9 @@ export async function getArticle(req: Request, res: Response) {
     const branch = req.params.branch;
     const number = req.query.number !== undefined ? (req.query.number as string) : undefined;
     const result = await getStory(articleId, branch, number);
-    res.status(200).json({ ...result, edit });
+    const { title, story, version, noUpdate } = result;
+    const content = story.replace(/\/n/g, '<p>');
+    res.status(200).json({ title, story: content, version, noUpdate, edit });
   } catch (err) {
     console.log(err);
     if (err instanceof ValidationError) {

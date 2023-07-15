@@ -14,7 +14,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NotFounds from './pages/NotFounds';
 import View from './pages/View';
-import { ErrorBoundary } from 'react-error-boundary';
 
 const App = () => {
   return (
@@ -32,23 +31,22 @@ const App = () => {
         theme="light"
       />
       <BrowserRouter>
-        <ErrorBoundary FallbackComponent={NotFounds}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/publish" element={<Publish />} />
-            <Route path="/publish/:articleId" element={<View />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/team/:teamId/" element={<Backstage />}>
-              <Route path="" element={<StartProject />} />
-              <Route path=":projectId" element={<Project />} />
-            </Route>
-            <Route path="/compare/mergeRequest/:projectId/:branch" element={<MergeRequestCompare />} />
-            <Route path="/compare/merge/:teamId/:projectId/:branch" element={<MergeCompare />} />
-            <Route path="/article/:team/:projectId/:branch?/:articleId?/:number?" element={<MediumEditor />} />
-            <Route path="*" element={<NotFounds />} />
-          </Routes>
-        </ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/publish" element={<Publish />} />
+          <Route path="/publish/:articleId" element={<View />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/team/:teamId/" element={<Backstage />}>
+            <Route path="" element={<StartProject />} />
+            <Route path=":projectId" element={<Project />} />
+          </Route>
+          <Route path="/compare/mergeRequest/:projectId/:branch" element={<MergeRequestCompare />} />
+          <Route path="/compare/merge/:teamId/:projectId/:branch" element={<MergeCompare />} />
+          <Route path="/article/:team/:projectId/:branch?/:articleId?/:number?" element={<MediumEditor />} />
+          <Route path="/notfound" element={<NotFounds />} />
+          <Route path="*" element={<NotFounds />} />
+        </Routes>
       </BrowserRouter>
     </TeamCtxProvider>
   );

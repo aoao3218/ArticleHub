@@ -6,7 +6,7 @@ const url: string = process.env.MONGODB || '';
 
 const db = () => {
   mongoose
-    .connect(url)
+    .connect(url, { maxPoolSize: 20 })
     .then(() => {
       console.log('MongoDB 連線成功！');
     })

@@ -66,11 +66,17 @@ function differentText(main: string, branch: string) {
   let diffText = '';
   for (const [op, data] of diffs) {
     if (op === DIFF_DELETE) {
-      diffText += `<s style='color: rgb(195, 34, 34)'>${data}</s>`;
+      diffText += `<span style="color: rgb(195, 34, 3); text-decoration: line-through;">${data.replace(
+        /\/n/g,
+        '<p style="color: rgb(195, 34, 3); text-decoration: line-through;">'
+      )}</span>`;
     } else if (op === DIFF_INSERT) {
-      diffText += `<s style="color: rgb(22, 159, 54); text-decoration: none;">${data}</s>`;
+      diffText += `<span style="color: rgb(22, 159, 54);">${data.replace(
+        /\/n/g,
+        '<p style="color: rgb(22, 159, 54);">'
+      )}</span>`;
     } else if (op === DIFF_EQUAL) {
-      diffText += data;
+      diffText += data.replace(/\/n/g, '<p>');
     }
   }
   return diffText;

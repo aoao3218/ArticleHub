@@ -21,7 +21,9 @@ const Navbar = () => {
   const navigate = useNavigate();
   const domain = window.location.host;
   const protocol = window.location.protocol;
-  console.log(teams);
+
+  useEffect(() => setTab(projectId), [projectId]);
+
   useEffect(() => {
     fetch(`${protocol}//${domain}/api/project/${teamId}`, {
       headers: new Headers({
@@ -78,6 +80,10 @@ const Navbar = () => {
   };
 
   const team = teams.find((team) => team._id == teamId);
+
+  const exists = projects.some((obj) => obj._id === projectId);
+
+  if (projectId && !exists) navigate('notfound');
 
   if (!team || !projects) {
     return <div>no team</div>;

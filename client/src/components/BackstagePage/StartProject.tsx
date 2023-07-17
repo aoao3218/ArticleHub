@@ -1,7 +1,7 @@
 import CreateProject from '../CreateProject';
 import { useState, useContext } from 'react';
 import { ProjectCtx } from '../../context/ProjectCtx';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { TeamCtx } from '../../context/TeamCtx';
 
 const StartProject = () => {
@@ -10,6 +10,7 @@ const StartProject = () => {
   const { teamId } = useParams();
   const { teams } = useContext(TeamCtx);
   const team = teams.find((team) => team._id == teamId);
+  const navigate = useNavigate();
   const jwt = localStorage.getItem('jwt');
   const domain = window.location.host;
   const protocol = window.location.protocol;
@@ -27,8 +28,10 @@ const StartProject = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setProjects(data);
+        if (data.length > 0) {
+          navigate(`/team/${teamId}/${data[0]._id}`);
+        }
       })
       .catch((err) => console.log(err));
   };

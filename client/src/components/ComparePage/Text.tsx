@@ -30,7 +30,6 @@ const Text = ({ branch, update }: Branch) => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           if (editorRef.current) {
             setTitle(data.title);
             editorRef.current.innerHTML = data.story;

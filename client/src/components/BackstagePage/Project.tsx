@@ -41,10 +41,7 @@ const Project = () => {
         }
         return res.json();
       })
-      .then((data) => {
-        console.log(data);
-        setArticles(data);
-      })
+      .then((data) => setArticles(data))
       .catch((err) => console.log(err));
   }
 

@@ -25,8 +25,8 @@ const Publish = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.errors) {
+          console.log(data.errors);
           return;
         }
         setPublish(data);

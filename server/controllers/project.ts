@@ -42,10 +42,14 @@ export async function getProject(req: Request, res: Response) {
   try {
     const teamId = req.params.teamId;
     const result = await projects.find({ team_id: teamId });
-
+    if (!result) throw new ValidationError('not found');
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
+    if (err instanceof ValidationError) {
+      res.status(400).json({ errors: err.message });
+      return;
+    }
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });
       return;

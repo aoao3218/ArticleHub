@@ -83,9 +83,10 @@ export async function getAllArticle(req: Request, res: Response) {
   try {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
-    const result = await articles
-      .find({ project_id: projectId, $or: [{ branch: 'main' }, { branch }] }, { article_id: 1, title: 1 })
-      .exec();
+    const result = await articles.find(
+      { project_id: projectId, $or: [{ branch: 'main' }, { branch }] },
+      { article_id: 1, title: 1 }
+    );
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
@@ -125,21 +126,6 @@ export async function getArticle(req: Request, res: Response) {
   }
 }
 
-export async function getPublishArticle(req: Request, res: Response) {
-  try {
-    const { articleId } = req.params;
-    const result = await publishes.findOne({ article_id: articleId });
-    res.status(200).json(result);
-  } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get Article failed' });
-  }
-}
-
 export async function compareArticle(req: Request, res: Response) {
   try {
     const articleId = req.params.articleId;
@@ -169,11 +155,9 @@ export async function publishArticle(req: Request, res: Response) {
     const userId = res.locals.userId;
     const projectId = req.params.projectId;
     const articleId = req.params.articleId;
+    const { title, story } = req.body;
     const article = await publishes.findOne({ project_id: projectId, article_id: articleId });
-    const { title, story } = await getStory(articleId, 'main', 'undefined');
-
     if (article) {
-      console.log('update');
       const result = await publishes.updateOne({ project_id: projectId, article_id: articleId }, { $set: { story } });
       return res.status(200).json(result);
     }
@@ -184,7 +168,6 @@ export async function publishArticle(req: Request, res: Response) {
       project_id: projectId,
       author: userId,
     });
-    console.log(result);
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
@@ -214,19 +197,5 @@ export async function getProjectPublish(req: Request, res: Response) {
       return;
     }
     res.status(500).json({ errors: 'get article publish failed' });
-  }
-}
-
-export async function getAllPublish(req: Request, res: Response) {
-  try {
-    const result = await publishes.find({});
-    res.status(200).json(result);
-  } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get publish failed' });
   }
 }

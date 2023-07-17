@@ -59,14 +59,7 @@ const CreateProject: React.FC<CreateProps> = ({ onClose, create }) => {
           Create Project
         </p>
         {message && <FailedMessage mgs={mgs} />}
-        <input
-          type="text"
-          maxLength={40}
-          pattern="[^/\\?]*"
-          value={Name}
-          onChange={handleNameChange}
-          placeholder="Project Name"
-        />
+        <input type="text" maxLength={40} value={Name} onChange={handleNameChange} placeholder="Project Name" />
         <button onClick={handleCreate}>Create</button>
       </div>
     </div>

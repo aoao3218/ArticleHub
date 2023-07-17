@@ -31,7 +31,7 @@ const Header = () => {
         {jwt ? (
           <div className="row" style={{ margin: 'auto 0' }}>
             <NavLink to={`/publish`} style={{ margin: 'auto 20px' }}>
-              Publish
+              Posts
             </NavLink>
             <NavLink to={`/profile`} style={{ margin: 'auto 20px' }}>
               Profile

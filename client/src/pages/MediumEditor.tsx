@@ -37,8 +37,8 @@ const Edit = () => {
 
   const handleSave = () => {
     const story = editorRef.current?.innerHTML;
-    console.log('Title:', title);
-    console.log('Story:', story);
+    // console.log('Title:', title);
+    // console.log('Story:', story);
     try {
       fetch(url, {
         method: 'POST',
@@ -50,7 +50,6 @@ const Edit = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           if (data.errors) {
             toast.error(data.errors);
             return;
@@ -94,7 +93,6 @@ const Edit = () => {
           toast.error(data.errors);
           return;
         }
-        console.log(data);
         if (compareRef.current) {
           compareRef.current.innerHTML = data.story;
           compareRef.current.setAttribute('contentEditable', 'false');
@@ -104,16 +102,17 @@ const Edit = () => {
   };
 
   const handlePublish = () => {
+    const story = editorRef.current?.innerHTML;
     fetch(`${protocol}//${domain}/api/article/publish/${id}/${articleId}`, {
       method: 'POST',
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
       }),
+      body: JSON.stringify({ title, story }),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.errors) {
           toast.error(data.errors);
           return;
@@ -157,7 +156,6 @@ const Edit = () => {
             return res.json();
           })
           .then((data) => {
-            console.log(data);
             setTitle(data.title);
             setVersion(data.version);
             setCurrentVersion(data.version);
@@ -195,7 +193,6 @@ const Edit = () => {
             return res.json();
           })
           .then((data) => {
-            console.log(data);
             setTitle(data.title);
             setVersion(data.version + 1);
             setCurrentVersion(data.version + 1);
@@ -232,7 +229,6 @@ const Edit = () => {
         fetch(url)
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
             if (number) setCurrentVersion(parseInt(number || ''));
             setTitle(data.title);
             setVersion(data.version + 1);

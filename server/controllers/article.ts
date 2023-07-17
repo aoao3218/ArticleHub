@@ -125,21 +125,6 @@ export async function getArticle(req: Request, res: Response) {
   }
 }
 
-export async function getPublishArticle(req: Request, res: Response) {
-  try {
-    const { articleId } = req.params;
-    const result = await publishes.findOne({ article_id: articleId });
-    res.status(200).json(result);
-  } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get Article failed' });
-  }
-}
-
 export async function compareArticle(req: Request, res: Response) {
   try {
     const articleId = req.params.articleId;
@@ -214,19 +199,5 @@ export async function getProjectPublish(req: Request, res: Response) {
       return;
     }
     res.status(500).json({ errors: 'get article publish failed' });
-  }
-}
-
-export async function getAllPublish(req: Request, res: Response) {
-  try {
-    const result = await publishes.find({});
-    res.status(200).json(result);
-  } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get publish failed' });
   }
 }

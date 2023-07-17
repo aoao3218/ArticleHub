@@ -1,7 +1,9 @@
 import { Router } from 'express';
-import { getAllPublish, getPublishArticle } from '../controllers/article.js';
+import { getSearch, getAllPublish, getPublishArticle } from '../controllers/publish.js';
 
 const router = Router();
+
+router.route('/search').post(getSearch);
 
 router.route('/publish').get(getAllPublish);
 

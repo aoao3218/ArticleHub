@@ -22,8 +22,6 @@ const Navbar = () => {
   const domain = window.location.host;
   const protocol = window.location.protocol;
 
-  useEffect(() => setTab(projectId), [projectId]);
-
   useEffect(() => {
     fetch(`${protocol}//${domain}/api/project/${teamId}`, {
       headers: new Headers({
@@ -81,9 +79,9 @@ const Navbar = () => {
 
   const team = teams.find((team) => team._id == teamId);
 
-  const exists = projects.some((obj) => obj._id === projectId);
-
-  if (projectId && !exists) navigate('notfound');
+  useEffect(() => {
+    setTab(projectId);
+  }, [projectId]);
 
   if (!team || !projects) {
     return <div>no team</div>;
@@ -99,7 +97,7 @@ const Navbar = () => {
             <span style={{ marginRight: '8px' }}>&lt;</span>back to teams
           </Link>
           <img
-            src="../Users.svg"
+            src="/Users.svg"
             alt="members"
             style={{ width: '20px', height: '20px', margin: 'auto 0' }}
             onClick={() => setMember(true)}

@@ -12,7 +12,6 @@ const Backstage = () => {
   const jwt = localStorage.getItem('jwt');
   const domain = window.location.host;
   const protocol = window.location.protocol;
-
   useEffect(() => {
     fetch(`${protocol}//${domain}/api/team`, {
       headers: new Headers({

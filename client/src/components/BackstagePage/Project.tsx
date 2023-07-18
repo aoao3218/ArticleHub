@@ -29,7 +29,7 @@ const Project = () => {
   const domain = window.location.host;
   const protocol = window.location.protocol;
 
-  function getArticle() {
+  useEffect(() => {
     fetch(`${protocol}//${domain}/api/article/all/${projectId}/${currentBranch}`, {
       headers: new Headers({
         Authorization: `Bearer ${jwt}`,
@@ -38,15 +38,12 @@ const Project = () => {
       .then((res) => {
         if (res.status !== 200) {
           showBoundary(res);
+          return;
         }
         return res.json();
       })
       .then((data) => setArticles(data))
       .catch((err) => console.log(err));
-  }
-
-  useEffect(() => {
-    getArticle();
   }, [projectId, currentBranch]);
 
   const closeCreateBranch = () => {

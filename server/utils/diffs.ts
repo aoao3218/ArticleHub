@@ -60,15 +60,15 @@ export async function getStory(articleId: string, branch: string, number: string
 }
 
 function differentText(main: string, branch: string) {
-  const diffs = dmp.diff_main(main, branch, undefined, 10);
-  // dmp.diff_cleanupSemantic(diffs);
+  const diffs = dmp.diff_main(main, branch, true);
+  dmp.diff_cleanupSemantic(diffs);
   // console.log(diffs);
   let diffText = '';
   for (const [op, data] of diffs) {
     if (op === DIFF_DELETE) {
-      diffText += `<span style="color: rgb(195, 34, 3); text-decoration: line-through;">${data.replace(
+      diffText += `<span style="color: rgb(195, 34, 3);">${data.replace(
         /\/n/g,
-        '<p style="color: rgb(195, 34, 3); text-decoration: line-through;">'
+        '<p style="color: rgb(195, 34, 3);">'
       )}</span>`;
     } else if (op === DIFF_INSERT) {
       diffText += `<span style="color: rgb(22, 159, 54);">${data.replace(
@@ -76,7 +76,7 @@ function differentText(main: string, branch: string) {
         '<p style="color: rgb(22, 159, 54);">'
       )}</span>`;
     } else if (op === DIFF_EQUAL) {
-      diffText += data.replace(/\/n/g, '<p>');
+      diffText += `<span>${data.replace(/\/n/g, '<p>')}</span>`;
     }
   }
   return diffText;

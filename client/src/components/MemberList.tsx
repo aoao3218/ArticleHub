@@ -32,7 +32,6 @@ const MemberList: React.FC<CreateProps> = ({ teamId, onClose }) => {
         console.log(err);
       });
   }, []);
-
   return (
     <div className="popup_bg">
       <div className="popup" style={{ width: '200px' }}>
@@ -42,7 +41,7 @@ const MemberList: React.FC<CreateProps> = ({ teamId, onClose }) => {
         <p style={{ fontSize: '20px', fontWeight: 'bold', margin: '0px auto 16px auto', alignContent: 'center' }}>
           Members
         </p>
-        {members.length > 1 ? (
+        {members.length > 0 ? (
           members.map((obj) => <div style={{ margin: '4px 0px' }}>{obj.email}</div>)
         ) : (
           <div style={{ textAlign: 'center' }}>no member</div>

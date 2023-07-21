@@ -8,78 +8,87 @@ import publishes from '../models/publish.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const secretKey = process.env.Secret_Key || '';
+async function createNewArticle(projectId: string, title: string, story: string, branch: string) {
+  const result = await articles.create({
+    project_id: projectId,
+    article_id: uuidv4(),
+    title,
+    story,
+    branch,
+    history: [],
+    previous_index: null,
+  });
+  return result;
+}
 
-export async function saveArticle(req: Request, res: Response) {
+async function saveArticleChanges(articleId: string, branch: string, story: string) {
+  const diffs = await getPatches(articleId, branch, story);
+  if (diffs.length == 0) throw new ValidationError('no change');
+  const filter = { article_id: articleId, branch };
+  const update = { $push: { history: diffs } };
+  const result = await articles.findOneAndUpdate(filter, update, { new: true });
+  return result;
+}
+
+async function createNewVersion(articleId: string, branch: string, story: string) {
+  const diffs = await getPatches(articleId, branch, story);
+  if (diffs.length == 0) throw new ValidationError('no change');
+  const main = await articles.findOne({ article_id: articleId, branch: 'main' });
+  const result = await versions.create({
+    article_id: articleId,
+    branch,
+    history: [diffs],
+    previous_index: main?.history.length,
+    update_index: main?.history.length,
+  });
+  return result;
+}
+
+async function saveVersionChange(articleId: string, branch: string, story: string) {
+  const diffs = await getPatches(articleId, branch, story);
+  if (diffs.length == 0) throw new ValidationError('no change');
+  const filter = { article_id: articleId, branch };
+  const update = { $push: { history: diffs } };
+  const result = await versions.findOneAndUpdate(filter, update, { new: true });
+  return result;
+}
+
+export async function saveArticle(req: Request, res: Response, next: NextFunction) {
   try {
     const articleId = req.params.articleId;
     const projectId = req.params.projectId;
     const branch = req.params.branch;
     const { title, story } = req.body;
     const content = await story.replace(/<p>/g, '/n').replace(/<\/p>/g, '');
-    if (!title) throw new ValidationError('title should not be empty');
-    const article = await articles.findOne({ article_id: articleId });
+
     if (articleId == 'undefined') {
-      console.log('a create');
-      const result = await articles.create({
-        project_id: projectId,
-        article_id: uuidv4(),
-        title,
-        story: content,
-        branch,
-        history: [],
-        previous_index: null,
-      });
-      res.status(200).json(result);
-      return;
-    } else if (article?.branch == branch) {
-      console.log('a save');
-      const diffs = await getPatches(articleId, branch, content);
-      if (diffs.length == 0) throw new ValidationError('no change');
-      const filter = { article_id: articleId, branch };
-      const update = { $push: { history: diffs } };
-      const result = await articles.findOneAndUpdate(filter, update, { new: true });
+      const result = await createNewArticle(projectId, title, content, branch);
       res.status(200).json(result);
       return;
     }
+
+    const article = await articles.findOne({ article_id: articleId });
+    if (article?.branch == branch) {
+      const result = await saveArticleChanges(articleId, branch, content);
+      res.status(200).json(result);
+      return;
+    }
+
     const version = await versions.findOne({ article_id: articleId, branch });
     if (!version) {
-      console.log('v create');
-      const diffs = await getPatches(articleId, branch, content);
-      if (diffs.length == 0) throw new ValidationError('no change');
-      const main = await articles.findOne({ article_id: articleId, branch: 'main' });
-      const result = await versions.create({
-        article_id: articleId,
-        branch,
-        history: [diffs],
-        previous_index: main?.history.length,
-        update_index: main?.history.length,
-      });
+      const result = await createNewVersion(articleId, branch, content);
       res.status(200).json(result);
       return;
     }
-    console.log('v save');
-    const diffs = await getPatches(articleId, branch, content);
-    if (diffs.length == 0) throw new ValidationError('no change');
-    const filter = { article_id: articleId, branch };
-    const update = { $push: { history: diffs } };
-    const result = await versions.findOneAndUpdate(filter, update, { new: true });
+
+    const result = await saveVersionChange(articleId, branch, content);
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'save Article failed' });
+    next(err);
   }
 }
 
-export async function getAllArticle(req: Request, res: Response) {
+export async function getAllArticle(req: Request, res: Response, next: NextFunction) {
   try {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
@@ -89,20 +98,11 @@ export async function getAllArticle(req: Request, res: Response) {
     );
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get Article failed' });
+    next(err);
   }
 }
 
-export async function getArticle(req: Request, res: Response) {
+export async function getArticle(req: Request, res: Response, next: NextFunction) {
   try {
     const edit = res.locals.edit;
     const articleId = req.params.articleId;
@@ -113,44 +113,25 @@ export async function getArticle(req: Request, res: Response) {
     const content = story.replace(/\/n/g, '<p>');
     res.status(200).json({ title, story: content, version, noUpdate, edit });
   } catch (err) {
-    console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get Article failed' });
+    next(err);
   }
 }
 
-export async function compareArticle(req: Request, res: Response) {
+export async function compareArticle(req: Request, res: Response, next: NextFunction) {
   try {
     const articleId = req.params.articleId;
     const branch = req.params.branch;
     const { version } = req.params;
-    if (branch == 'main') {
-      throw new ValidationError('main is not comparable');
-    }
+    if (branch == 'main') throw new ValidationError('main is not comparable');
+
     const result = await getCompare(articleId, branch, version);
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'compare Article failed' });
+    next(err);
   }
 }
 
-export async function publishArticle(req: Request, res: Response) {
+export async function publishArticle(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = res.locals.userId;
     const projectId = req.params.projectId;
@@ -171,31 +152,17 @@ export async function publishArticle(req: Request, res: Response) {
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'article publish failed' });
+    next(err);
   }
 }
 
-export async function getProjectPublish(req: Request, res: Response) {
+export async function getProjectPublish(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = res.locals.userId;
     const projectId = req.params.projectId;
-    console.log(projectId);
     const result = await publishes.find({ project_id: projectId, author: userId });
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get article publish failed' });
+    next(err);
   }
 }

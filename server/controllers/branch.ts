@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { ValidationError } from '../utils/errorHandler.js';
 import projects from '../models/project.js';
 import articles from '../models/article.js';
@@ -27,13 +27,10 @@ interface Project {
   }[];
 }
 
-export async function createBranch(req: Request, res: Response) {
+export async function createBranch(req: Request, res: Response, next: NextFunction) {
   try {
     const projectId = req.params.projectId;
     const { name } = req.body;
-    if (!name) throw new ValidationError('Should have Branch Name');
-    const validRegex = /[?\\/]/g;
-    if (validRegex.test(name)) throw new ValidationError('Should not have Special characters');
     const userId = res.locals?.userId;
     const project: Project | null = await projects.findById(projectId).populate('team_id');
     const isOwner = userId === project?.team_id?.owner.toString();
@@ -51,31 +48,17 @@ export async function createBranch(req: Request, res: Response) {
     const result = await projects.findByIdAndUpdate(filter, update, { new: true });
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'create Branch failed' });
+    next(err);
   }
 }
 
-export async function getBranch(req: Request, res: Response) {
+export async function getBranch(req: Request, res: Response, next: NextFunction) {
   try {
     const projectId = req.params.projectId;
     const result = await projects.findById(projectId);
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'create Branch failed' });
+    next(err);
   }
 }
 
@@ -138,7 +121,7 @@ export async function mergeDismiss(req: Request, res: Response) {
   await updateMergeRequest(req, res, false);
 }
 
-export async function getChangeArticleId(req: Request, res: Response) {
+export async function getChangeArticleId(req: Request, res: Response, next: NextFunction) {
   try {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
@@ -162,40 +145,17 @@ export async function getChangeArticleId(req: Request, res: Response) {
         },
       },
     ]);
-
-    const projectArticles = await articles.aggregate([
-      {
-        $match: {
-          project_id: new ObjectId(projectId),
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          article_id: 1,
-        },
-      },
-    ]);
-
-    // const change = branchArticles.filter(
-    //   (ele) => ele.branch == branch || ele.versions.some((version: any) => version.branch === branch)
-    // );
     const changeArticles = branchArticles.map((ele) => ({
       article_id: ele.article_id,
       title: ele.title,
     }));
     res.status(200).json(changeArticles);
   } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'create Branch failed' });
+    next(err);
   }
 }
 
-export async function updateBranchArticles(req: Request, res: Response) {
+export async function updateBranchArticles(req: Request, res: Response, next: NextFunction) {
   try {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
@@ -233,16 +193,11 @@ export async function updateBranchArticles(req: Request, res: Response) {
     const result = await versions.bulkWrite(await updateDiffs);
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'create Branch failed' });
+    next(err);
   }
 }
 
-export async function mergeBranchArticles(req: Request, res: Response) {
+export async function mergeBranchArticles(req: Request, res: Response, next: NextFunction) {
   try {
     const projectId = req.params.projectId;
     const branch = req.params.branch;
@@ -304,11 +259,6 @@ export async function mergeBranchArticles(req: Request, res: Response) {
     await projects.updateOne({ _id: new ObjectId(projectId) }, { $pull: { branch: { name: branch } } });
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'create Branch failed' });
+    next(err);
   }
 }

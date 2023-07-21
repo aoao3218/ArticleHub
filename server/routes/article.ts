@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { Request, Response, NextFunction } from 'express';
-
+import * as validator from '../middleware/validator.js';
+import { body } from 'express-validator';
 import {
   saveArticle,
   getArticle,
@@ -22,13 +23,23 @@ const router = Router();
 
 router.route('/article/publish/:projectId').get(authenticate, getProjectPublish);
 
-router.route('/article/publish/:projectId/:articleId').post(authenticate, publishArticle);
+router
+  .route('/article/publish/:projectId/:articleId')
+  .post(
+    body('title').exists().notEmpty(),
+    body('story').exists().notEmpty(),
+    validator.handleResult,
+    authenticate,
+    publishArticle
+  );
 
 router.route('/article/compare/:branch/:articleId/:version').get(compareArticle);
 
 router.route('/article/all/:projectId/:branch').get(authenticate, getAllArticle);
 
-router.route('/article/:projectId/:branch/:articleId').post(authenticate, saveArticle);
+router
+  .route('/article/:projectId/:branch/:articleId')
+  .post(body('title').exists().notEmpty(), body('story').exists(), validator.handleResult, authenticate, saveArticle);
 
 router
   .route('/article/:projectId/:branch/:articleId')

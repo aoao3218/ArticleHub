@@ -11,7 +11,7 @@ interface Team {
   own?: boolean;
 }
 
-export async function getTeam(req: Request, res: Response) {
+export async function getTeam(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = res.locals?.userId;
     const team = await teams.find({ $or: [{ owner: userId }, { 'member._id': userId }] });
@@ -22,21 +22,13 @@ export async function getTeam(req: Request, res: Response) {
     });
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get Team failed' });
+    next(err);
   }
 }
 
-export async function createTeam(req: Request, res: Response) {
+export async function createTeam(req: Request, res: Response, next: NextFunction) {
   try {
     const { name, emails } = req.body;
-    if (!name) throw new ValidationError('Should have Team Name');
-    const validRegex = /[?\\/]/g;
-    if (validRegex.test(name)) throw new ValidationError('Should not have Special characters');
     const userId = res.locals?.userId;
     const owner = await users.findById(userId);
     if (!owner) throw new ValidationError('No such account');
@@ -49,20 +41,11 @@ export async function createTeam(req: Request, res: Response) {
     });
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'create Team failed' });
+    next(err);
   }
 }
 
-export async function inviteMember(req: Request, res: Response) {
+export async function inviteMember(req: Request, res: Response, next: NextFunction) {
   try {
     const { emails } = req.body;
     const teamId = req.params.teamId;
@@ -75,19 +58,11 @@ export async function inviteMember(req: Request, res: Response) {
     const result = await teams.updateOne(filter, update);
     res.status(200).json(result);
   } catch (err) {
-    if (err instanceof ValidationError) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'invite Member failed' });
+    next(err);
   }
 }
 
-export async function getMember(req: Request, res: Response) {
+export async function getMember(req: Request, res: Response, next: NextFunction) {
   try {
     const teamId = req.params.teamId;
     const result = await teams.findById(teamId).select('member');
@@ -95,10 +70,6 @@ export async function getMember(req: Request, res: Response) {
     const memberEmails = await users.find({ _id: { $in: memberIds } }).select('email');
     res.status(200).json(memberEmails);
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'invite Member failed' });
+    next(err);
   }
 }

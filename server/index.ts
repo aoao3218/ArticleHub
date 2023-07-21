@@ -72,7 +72,6 @@ app.use(cookieParser());
 app.enable('trust proxy');
 
 app.use((req, res, next) => {
-  res.locals.io = io;
   next();
 });
 

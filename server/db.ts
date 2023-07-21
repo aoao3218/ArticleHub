@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const url: string = process.env.MONGODB || '';
+const url: string =
+  process.env.NODE_ENV === 'production' ? process.env.MONGODB ?? '' : 'mongodb://127.0.0.1:27017/ArticleHub';
 
 const db = () => {
   mongoose

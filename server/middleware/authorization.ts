@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import teams from '../models/team.js';
-import articles from '../models/article.js';
-import { Types } from 'mongoose';
 import projects from '../models/project.js';
 
 export const authorization = (roleNames: string[]) => async (req: Request, res: Response, next: NextFunction) => {
@@ -31,38 +29,6 @@ export const authorization = (roleNames: string[]) => async (req: Request, res: 
   }
 };
 
-interface article {
-  id: Types.ObjectId;
-  project_id: {
-    id: Types.ObjectId;
-    name: string;
-    team_id: Types.ObjectId;
-    main: String;
-    createBy: Types.ObjectId;
-    branch: [
-      {
-        name: String;
-        createBy: Types.ObjectId;
-        merge_request: boolean;
-      }
-    ];
-  };
-  article_id: string;
-  title: string;
-  story: string;
-  branch: string;
-  history: HistoryEntry[][];
-  previous_index: number | null;
-}
-
-interface HistoryEntry {
-  diffs: [number, string][];
-  start1: number;
-  start2: number;
-  length1: number;
-  length2: number;
-}
-
 export const articleAuthorization = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = res.locals.userId;
@@ -71,7 +37,6 @@ export const articleAuthorization = async (req: Request, res: Response, next: Ne
     const project = await projects.findById(projectId);
     const isOwner = project?.createBy?.toString() === userId;
     if (branch === 'main' && isOwner) {
-      // console.log('owner');
       res.locals.edit = true;
       next();
       return;
@@ -82,14 +47,12 @@ export const articleAuthorization = async (req: Request, res: Response, next: Ne
     );
 
     if (hasMatchingBranch) {
-      // console.log('member');
       res.locals.edit = true;
       next();
       return;
     }
 
     res.locals.edit = false;
-    // console.log('false');
     next();
   } catch (err) {
     console.log(err);

@@ -62,7 +62,6 @@ export async function getStory(articleId: string, branch: string, number: string
 function differentText(main: string, branch: string) {
   const diffs = dmp.diff_main(main, branch, true);
   dmp.diff_cleanupSemantic(diffs);
-  // console.log(diffs);
   let diffText = '';
   for (const [op, data] of diffs) {
     if (op === DIFF_DELETE) {
@@ -163,16 +162,10 @@ export async function updateStory(article: Article) {
   const branchStory = dmp.patch_apply(history as patch_obj[], article.story as string)[0];
   const diffs = dmp.diff_main(mainStory, branchStory);
   dmp.diff_cleanupSemantic(diffs);
-  // diffs.forEach(([value, text]) => {
-  //   const newValue = value == -1 ? 0 : value;
-  //   return [newValue, text];
-  // });
-  console.log(diffs);
   let diffText = '';
   for (const [op, data] of diffs) {
     diffText += data;
   }
-  console.log(diffText);
   const patches = dmp.patch_make(branchStory, diffText);
   return patches;
 }

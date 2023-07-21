@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as argon2 from 'argon2';
 import signJWT, { EXPIRE_TIME } from '../utils/signJWT.js';
 import users from '../models/user.js';
@@ -11,7 +11,7 @@ const COOKIE_OPTIONS = {
   sameSite: 'strict',
 } as const;
 
-export async function signUp(req: Request, res: Response) {
+export async function signUp(req: Request, res: Response, next: NextFunction) {
   try {
     const { name, email, password } = req.body;
     const check = await users.find({ email });
@@ -28,15 +28,11 @@ export async function signUp(req: Request, res: Response) {
     const token = await signJWT(user._id.toString());
     res.status(200).json({ token });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'sign up failed' });
+    next(err);
   }
 }
 
-export async function signIn(req: Request, res: Response) {
+export async function signIn(req: Request, res: Response, next: NextFunction) {
   try {
     const { email, password } = req.body;
     const user = await users.findOne({ email });
@@ -51,12 +47,7 @@ export async function signIn(req: Request, res: Response) {
     // res.cookie('jwtToken', token, COOKIE_OPTIONS);
     res.status(200).json({ token });
   } catch (err) {
-    console.log(err);
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'sign in failed' });
+    next(err);
   }
 }
 
@@ -69,7 +60,7 @@ async function getFbProfileData(userToken: string) {
   return profile;
 }
 
-export async function fbLogin(req: Request, res: Response) {
+export async function fbLogin(req: Request, res: Response, next: NextFunction) {
   try {
     const { access_token: userToken } = req.body;
     const profile = await getFbProfileData(userToken);
@@ -92,24 +83,16 @@ export async function fbLogin(req: Request, res: Response) {
     // res.cookie('jwtToken', token, COOKIE_OPTIONS)
     res.status(200).json({ msg: 'sign in success' });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'fb login failed' });
+    next(err);
   }
 }
 
-export async function getProfile(req: Request, res: Response) {
+export async function getProfile(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = res.locals.userId;
     const user = await users.findById(userId);
     res.status(200).json(user);
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: 'get profile failed' });
+    next(err);
   }
 }

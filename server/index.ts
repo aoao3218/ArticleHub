@@ -87,3 +87,5 @@ app.use(errorHandler);
 httpsServer.listen(port, () => {
   console.log(`Medium listening on port ${port}`);
 });
+
+export default app;

@@ -9,7 +9,7 @@ import {
 } from '../controllers/branch.js';
 import { authorization, branchAuthorization } from '../middleware/authorization.js';
 import * as validator from '../middleware/validator.js';
-import { body, param } from 'express-validator';
+import { body } from 'express-validator';
 
 const router = Router();
 

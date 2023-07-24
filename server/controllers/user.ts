@@ -37,17 +37,21 @@ export async function signIn(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body;
     const user = await users.findOne({ email });
     if (!user) {
-      throw new Error('Email does not exist.');
+      throw new ValidationError('Email does not exist.');
     }
     const isValidPassword = await argon2.verify(user.password, password);
     if (!isValidPassword) {
-      throw new Error('invalid password');
+      throw new ValidationError('invalid password');
     }
     const token = await signJWT(user._id.toString());
     // res.cookie('jwtToken', token, COOKIE_OPTIONS);
     res.status(200).json({ token });
   } catch (err) {
-    next(err);
+    if (err instanceof ValidationError) {
+      res.status(400).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: 'sign in failed' });
   }
 }
 

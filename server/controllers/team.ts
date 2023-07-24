@@ -49,7 +49,7 @@ export async function inviteMember(req: Request, res: Response, next: NextFuncti
   try {
     const { emails } = req.body;
     const teamId = req.params.teamId;
-    const userId = res.locals?.userId ?? false;
+    const userId = res.locals?.userId;
     const member = await users.find({ email: { $in: emails } });
     if (emails.length !== member.length) throw new ValidationError('some email is invalid');
     const filter = { _id: teamId, owner: userId };

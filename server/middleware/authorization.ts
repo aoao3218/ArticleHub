@@ -80,8 +80,7 @@ export const branchAuthorization = async (req: Request, res: Response, next: Nex
     console.log(err);
     if (err instanceof Error) {
       res.status(403).json({ errors: err.message });
-    } else {
-      res.status(403).json({ errors: 'authorization failed' });
     }
+    res.status(403).json({ errors: 'authorization failed' });
   }
 };

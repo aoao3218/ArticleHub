@@ -16,17 +16,25 @@ Article moderation site inspired by Git. Make it easier and more efficient for t
 
 #### branch create
 
+Create a branch to allow team members to make edits to the article without affecting each other.
+
 ![img](./img/branch.png)
 
 #### version control
+
+Each time you save an edited article, a new version is created, allowing you to access historical versions of the edits.
 
 ![img](./img/version%20contorl.png)
 
 #### text compare
 
+Apart from the main branch, you have the option to compare article versions with the latest content in the main branch and indicate the added and deleted sections.
+
 ![img](./img/text%20compare.png)
 
-#### sysnc modifications to the main branch
+#### sync modifications to the main branch
+
+After making modifications in the branch, send a synchronization request, and once approved, the updated content will be visible in the main branch as a new version.
 
 ![img](./img/requset.png)
 

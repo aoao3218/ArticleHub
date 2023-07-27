@@ -26,19 +26,23 @@ export async function getPublishArticle(req: Request, res: Response, next: NextF
 export async function getSearch(req: Request, res: Response, next: NextFunction) {
   try {
     const { q } = req.body;
-    const data = await elastic.search({
-      index: 'search-post',
-      body: {
-        query: {
-          multi_match: {
-            query: q,
-            fields: ['title', 'story'],
-            fuzziness: 2,
-          },
-        },
-      },
+    // const data = await elastic.search({
+    //   index: 'search-post',
+    //   body: {
+    //     query: {
+    //       multi_match: {
+    //         query: q,
+    //         fields: ['title', 'story'],
+    //         fuzziness: 2,
+    //       },
+    //     },
+    //   },
+    // });
+    // const result = data.body.hits.hits.map((ele: any) => ele._source);
+    const regex = new RegExp(q, 'i');
+    const result = await publishes.find({
+      $or: [{ title: { $regex: regex } }, { story: { $regex: regex } }],
     });
-    const result = data.body.hits.hits.map((ele: any) => ele._source);
     res.status(200).json(result);
   } catch (err) {
     next(err);

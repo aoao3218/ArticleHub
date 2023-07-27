@@ -32,6 +32,12 @@ Apart from the main branch, you have the option to compare article versions with
 
 ![img](./img/text%20compare.png)
 
+#### Share URL
+
+Click the share button, then paste the URL to enable others to view the article and see the number of people viewing it simultaneously.
+
+![img](./img/share.png)
+
 #### sync modifications to the main branch
 
 After making modifications in the branch, send a synchronization request, and once approved, the updated content will be visible in the main branch as a new version.
@@ -48,7 +54,7 @@ Only the project creator can approve the sync request
 
 ## Tech Stack
 
-**Client:** React-TypeScript, CSS/SCSS
+**Client:** React-TypeScript, React Router, CSS/SCSS
 
 **Server:** Node, Express, TypeScript
 

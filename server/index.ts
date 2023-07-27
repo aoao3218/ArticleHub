@@ -47,8 +47,9 @@ const io = new Server(httpsServer, {
 io.on('connection', (socket) => {
   socket.on('join', async ({ projectId, articleId, branch }) => {
     const id = socket.id;
+    const expireTime = 60 * 60;
     const roomId = `${projectId}-${branch}-${articleId}`;
-    redis.setex(id, 24 * 60 * 60, roomId);
+    redis.setex(id, expireTime, roomId);
     redis.lpush(roomId, id);
     const visitors = await redis.llen(roomId);
     socket.join(roomId);

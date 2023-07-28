@@ -4,8 +4,8 @@ import { toast } from 'react-toastify';
 import { JWTCtx } from '../context/JWTCtx';
 
 const SignIN = () => {
-  const [userEmail, setUserEmail] = useState('');
-  const [userPassword, setUserPassword] = useState('');
+  const [userEmail, setUserEmail] = useState('1234@gmail.com');
+  const [userPassword, setUserPassword] = useState('1234');
   const { setJWT } = useContext(JWTCtx);
   const navigate = useNavigate();
   const protocol = window.location.protocol;
@@ -41,9 +41,9 @@ const SignIN = () => {
       <h4>Welcome back.</h4>
       <div className="form">
         <label htmlFor="email">Email</label>
-        <input type="email" id="email" onChange={(e) => setUserEmail(e.target.value)} />
+        <input type="email" id="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} />
         <label htmlFor="password">PassWord</label>
-        <input type="password" id="password" onChange={(e) => setUserPassword(e.target.value)} />
+        <input type="password" id="password" value={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
         <button id="signInBtn" onClick={handleSubmit} style={{ margin: '20px 0px' }}>
           登入
         </button>

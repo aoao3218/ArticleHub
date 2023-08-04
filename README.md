@@ -1,12 +1,3 @@
-[![NPM](https://img.shields.io/badge/NPM-ba443f?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/)
-[![logo](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/en/)
-[![logo](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://www.w3schools.com/html/)
-[![docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-[![elasticsearch](https://img.shields.io/badge/elasticsearch-005571?style=for-the-badge&logo=elasticsearch&logoColor=white)](https://www.elastic.co/)
-[![socket.io](https://img.shields.io/badge/socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
-[![MongoDB](https://img.shields.io/badge/mongodb-4479A1?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-
 # ArticleHub
 
 Article moderation site inspired by Git. Make it easier and more efficient for team to manage article versions.
@@ -54,13 +45,33 @@ Only the project creator can approve the sync request
 
 ## Tech Stack
 
-**Client:** React-TypeScript, React Router, CSS/SCSS
+**Client:**
 
-**Server:** Node, Express, TypeScript
+![React](https://img.shields.io/badge/-React-343434?style=for-the-badge&logo=react)
+![SCSS](https://img.shields.io/badge/-SCSS-343434?style=for-the-badge&logo=sass)
+![Typescript](https://img.shields.io/badge/Typescript-343434?style=for-the-badge&logo=typescript)
 
-**DataBase:** MongoDB, Redis, Elasticsearch
+**Server:**
 
-**Tool:** Socket.IO, Docker
+![Nodejs](https://img.shields.io/badge/Node.js-343434?style=for-the-badge&logo=node.js&logoColor=3C873A)
+![Express.js](https://img.shields.io/badge/Express.js-343434?style=for-the-badge&logo=express)
+![SocketIo](https://img.shields.io/badge/Socket.io-343434?&style=for-the-badge&logo=Socket.io)
+![Typescript](https://img.shields.io/badge/Typescript-343434?style=for-the-badge&logo=typescript&logoColor=007acc)
+
+**DataBase:**
+
+![mongodb](https://img.shields.io/badge/mongodb-343434?&style=for-the-badge&logo=mongodb&logoColor=RED)
+![Redis](https://img.shields.io/badge/redis-343434?&style=for-the-badge&logo=redis&logoColor=RED)
+![elasticsearch](https://img.shields.io/badge/elasticsearc-343434?&style=for-the-badge&logo=elasticsearch&logoColor=005571)
+
+**Tool:**
+
+![Docker](https://img.shields.io/badge/Docker-343434?style=for-the-badge&logo=docker)
+![AWWS](https://img.shields.io/badge/AWS-343434?style=for-the-badge&logo=amazon-aws)
+
+## Schema
+
+![img](./img/schema.png)
 
 ## Test Account
 

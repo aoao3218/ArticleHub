@@ -292,6 +292,7 @@ const Edit = () => {
     socket.on('visitors', ({ visitors }) => setVisitor(visitors));
     socket.on('leave', ({ visitors }) => setVisitor(visitors));
     return () => {
+      socket.emit('disconnect');
       socket.off('visitors', ({ visitors }) => setVisitor(visitors));
       socket.off('leave', ({ visitors }) => setVisitor(visitors));
     };

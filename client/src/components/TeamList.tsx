@@ -2,15 +2,16 @@ import { useContext, useState, useEffect } from 'react';
 import { TeamCtx } from '../context/TeamCtx';
 import { Link } from 'react-router-dom';
 import CreateTeam from './CreateTeam';
+import { useNavigate } from 'react-router-dom';
 
 const TeamList = () => {
   const { teams, setTeams } = useContext(TeamCtx);
   const [user, setUser] = useState<string | null>(null);
   const [isOpen, setCreateTeam] = useState(false);
-  const jwt = localStorage.getItem('jwt');
+  const [jwt] = useState(() => localStorage.getItem('jwt'));
   const domain = window.location.host;
   const protocol = window.location.protocol;
-
+  const navigate = useNavigate();
   function getTeams() {
     fetch(`${protocol}//${domain}/api/team`, {
       headers: new Headers({
@@ -22,6 +23,12 @@ const TeamList = () => {
       .then((data) => setTeams(data))
       .catch((err) => console.log(err));
   }
+
+  useEffect(() => {
+    if (!jwt) {
+      navigate('/');
+    }
+  }, [jwt]);
 
   useEffect(() => {
     fetch(`${protocol}//${domain}/api/user/profile`, {

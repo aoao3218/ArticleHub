@@ -22,7 +22,6 @@ const SignIN = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           if (data.errors) {
             toast.error(data.errors);
             return;

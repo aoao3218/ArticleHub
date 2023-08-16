@@ -3,40 +3,41 @@
 Article moderation site inspired by Git. Make it easier and more efficient for team to manage article versions.
 [ArticleHub](https://emmalinstudio.com/)
 
-## Features
+## Situation
 
-#### Branch create
+Before an article is published, there are often multiple rounds of proofreading and revisions at the publishing house. Now, with the addition of a new team member, the chief editor has assigned them to edit the headline of one of the articles.
 
-Create a branch to allow team members to make edits to the article without affecting each other.
+(The chief editor has added the new team member's account to the NEWS team.)
+
+#### STEP1:Create Branch
+
+Create a new branch in order to have the permissions to edit articles. You won't have the authority to edit articles on branches that you haven't created yourself.
 
 ![img](./img/branch.png)
 
-#### Version control
+#### STEP2:Edit and Save Article
 
 Each time you save an edited article, a new version is created, allowing you to access historical versions of the edits.
 
 ![img](./img/version%20contorl.png)
 
-#### Text compare
+#### STEP3:Check Article Change
 
-Apart from the main branch, you have the option to compare article versions with the latest content in the main branch and indicate the added and deleted sections.
+Click the "Compare" button to compare your edits with the main article and display the added and modified sections.
 
 ![img](./img/text%20compare.png)
 
-#### Share URL
+#### STEP4:Confirm the content with the chief editor
 
-Click the share button, then paste the URL to enable others to view the article and see the number of people viewing it simultaneously.
+Click the "Share" button to copy and paste the URL for browsing the article. This way, the chief editor won't need to search for the article and can easily access it. Additionally, this feature allows the chief editor to see how many people are currently viewing the article at the same time.
 
 ![img](./img/share.png)
 
-#### Sync modifications to the main branch
+#### STEP5:Sync modifications to the main branch
 
-After making modifications in the branch, send a synchronization request, and once approved, the updated content will be visible in the main branch as a new version.
+Once the synchronization request is submitted and approved by the supervisor, the formal article will be updated with the modified sections that were synchronized.
 
 ![img](./img/requset.png)
-
-Only the project creator can approve the sync request
-
 ![img](./img/approve.png)
 
 ## Server structure
